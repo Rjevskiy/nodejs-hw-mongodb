@@ -1,14 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import { initMongoDB } from './db/initMongoConnection.js'; // Подключаем функцию для инициализации MongoDB
 import pino from 'pino-http';
 import cors from 'cors';
 
-dotenv.config();
-
-const PORT = Number(process.env.PORT) || 3000;
-
-export const startServer = () => {
+export const startServer = (PORT) => {
   const app = express();
 
   // Используем middleware
@@ -31,10 +25,3 @@ export const startServer = () => {
     console.log(`Server is running on port ${PORT}`);
   });
 };
-
-// Инициализация базы данных и запуск сервера
-initMongoDB().then(() => {
-  startServer();
-}).catch(error => {
-  console.error('Error while connecting to MongoDB:', error.message);
-});
