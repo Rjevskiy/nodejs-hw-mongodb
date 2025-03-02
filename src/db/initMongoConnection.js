@@ -9,7 +9,7 @@ const mongoURI = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_UR
 
 export const initMongoDB = async () => {
   try {
-    await mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(mongoURI); // Удалены устаревшие опции
     console.log('Successfully connected to MongoDB!');
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
