@@ -16,3 +16,10 @@ initMongoDB()
   .catch((error) => {
     console.error('Error while connecting to MongoDB:', error.message);
   });
+
+  const mongoose = require('mongoose');
+const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+   .then(() => console.log("MongoDB connected"))
+   .catch(err => console.log("MongoDB connection error: ", err));
