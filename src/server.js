@@ -1,5 +1,3 @@
-// src/server.js
-
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
@@ -7,7 +5,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Читаємо змінну оточення PORT
 const PORT = Number(process.env.PORT) || 3000; // Если PORT не задан, по умолчанию будет 3000
 
 export const startServer = () => {
