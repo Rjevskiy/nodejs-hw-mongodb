@@ -1,6 +1,7 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
+import contactsRouter from './routes/contacts.js';  // Импортируем роут для контактов
 
 export const startServer = (PORT) => {
   const app = express();
@@ -14,6 +15,9 @@ export const startServer = (PORT) => {
   app.get('/', (req, res) => {
     res.send('Hello, world!');
   });
+
+  // Роут для /contacts
+  app.use('/contacts', contactsRouter);  // Добавляем роут для получения контактов
 
   // Обработчик несуществующих маршрутов
   app.use('*', (req, res) => {
