@@ -16,11 +16,11 @@ console.log('PORT:', PORT);
 
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-   .then(() => {
-      console.log("🔥 MongoDB connected");
-      startServer(PORT); // Если подключение успешно, запускаем сервер на указанном порту
-   })
-   .catch(err => {
-      console.error('❌ MongoDB connection error:', err.message);
-   });
+mongoose.connect(mongoURI)
+  .then(() => {
+    console.log('🔥 MongoDB connected');
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+  });
+
