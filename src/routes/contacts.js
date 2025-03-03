@@ -1,6 +1,5 @@
 import express from 'express';
-import { getContacts, getContact  } from '../controllers/contactsController.js';  // Импортируем контроллер
-
+import { getContacts, getContact } from '../controllers/contactsController.js';  // Импортируем контроллер
 
 const router = express.Router();
 
@@ -8,6 +7,6 @@ const router = express.Router();
 router.get('/', getContacts);
 
 // Роут для получения контакта по ID
-router.get('contactsId', getContact);  // Используем обычное имя без двоеточия
+router.get('/:contactId', getContact);
 
 export { router as contactsRouter };
