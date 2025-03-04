@@ -17,7 +17,7 @@ const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGOD
 
 mongoose.connect(mongoURI)
   .then(() => {
-    console.log('🔥 MongoDB connected');
+    console.log(' MongoDB connected');
     
     startServer(PORT);
   })
