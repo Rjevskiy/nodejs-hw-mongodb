@@ -26,7 +26,7 @@ const contactSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true // Автоматически добавляет поля createdAt и updatedAt
+    timestamps: true 
   }
 );
 

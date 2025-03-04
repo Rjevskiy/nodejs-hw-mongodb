@@ -1,9 +1,9 @@
 import express from 'express';
-import { getAllContacts, getContactById } from '../services/contacts.js';  // Импортируем сервисы
+import { getAllContacts, getContactById } from '../services/contacts.js';  
 
-const contactsRouter = express.Router();  // Создаем роутер для контактов
+const contactsRouter = express.Router();  
 
-// Роут для получения всех контактов
+
 contactsRouter.get('/', async (req, res) => {
   try {
     const contacts = await getAllContacts();
@@ -21,7 +21,7 @@ contactsRouter.get('/', async (req, res) => {
   }
 });
 
-// Роут для получения контакта по ID
+
 contactsRouter.get('/:contactId', async (req, res) => {
   const { contactId } = req.params;
   try {
@@ -47,4 +47,4 @@ contactsRouter.get('/:contactId', async (req, res) => {
   }
 });
 
-export { contactsRouter };  // Экспортируем роутер
+export { contactsRouter };  

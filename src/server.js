@@ -1,22 +1,22 @@
 import express from 'express';
-import { contactsRouter } from './routes/contacts.js';  // Импортируем роут для контактов
+import { contactsRouter } from './routes/contacts.js';  
 
-// Функция для запуска сервера
+
 export const startServer = (PORT) => {
-  const app = express();  // Создаем экземпляр Express
+  const app = express();  
 
-  // Используем middleware
-  app.use(express.json());  // Для парсинга JSON в теле запроса
+  
+  app.use(express.json());  
 
-  // Роут для /contacts
-  app.use('/contacts', contactsRouter);  // Добавляем роут для получения контактов
 
-  // Обработчик несуществующих маршрутов
+  app.use('/contacts', contactsRouter);  
+
+ 
   app.use('*', (req, res) => {
     res.status(404).json({ message: 'Not found' });
   });
 
-  // Запуск сервера
+  
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

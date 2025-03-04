@@ -1,6 +1,6 @@
 import { getContactById, getAllContacts } from '../services/contacts.js';
 
-// Получить все контакты
+
 export const getAllContactsController = async (req, res) => {
   try {
     const contacts = await getAllContacts();
@@ -14,7 +14,7 @@ export const getAllContactsController = async (req, res) => {
   }
 };
 
-// Получить один контакт по ID
+
 export const getContactController = async (req, res) => {
   const { contactId } = req.params;
   try {
@@ -32,15 +32,15 @@ export const getContactController = async (req, res) => {
   }
 };
 
-// Контроллер для GET /contacts/:contactId
+
 export const getContact = async (req, res) => {
-  const { contactId } = req.params; // Получаем ID из URL
+  const { contactId } = req.params; 
 
   try {
-    const contact = await getContactById(contactId); // Получаем контакт из сервиса
+    const contact = await getContactById(contactId); 
 
     if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' }); // Если нет контакта — 404
+      return res.status(404).json({ message: 'Contact not found' }); 
     }
 
     res.status(200).json({
