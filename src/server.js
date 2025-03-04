@@ -1,7 +1,7 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import { contactsRouter } from './routes/contacts.js';  // Импортируем роут для контактов
+import contactsRouter from './routes/contacts.js';
 
 export const startServer = (PORT) => {
   const app = express();

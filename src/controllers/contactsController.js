@@ -1,43 +1,33 @@
-import { getAllContacts } from '../services/contacts.js';  // Импортируем сервис
+import { getContactById, getAllContacts } from '../services/contacts.js';
 
-// Контроллер для обработки GET запроса на /contacts
-export const getContacts = async (req, res) => {
+// Получить все контакты
+export const getAllContactsController = async (req, res) => {
   try {
-    const contacts = await getAllContacts();  // Получаем все контакты через сервис
+    const contacts = await getAllContacts();
     res.status(200).json({
       status: 200,
-      message: "Successfully found contacts!",
+      message: 'Successfully retrieved all contacts!',
       data: contacts,
     });
   } catch (err) {
-    res.status(500).json({
-      status: 500,
-      message: "Failed to retrieve contacts",
-      error: err.message,
-    });
+    res.status(500).json({ message: 'Failed to get contacts', error: err.message });
   }
 };
 
-export const getContact = async (req, res) => {
-    console.log('Получен запрос на контакт с ID:', req.params.contactId);  // Логируем ID
-  
-    try {
-      const contact = await getContactById(req.params.contactId);  // Получаем контакт по ID
-  
-      if (!contact) {
-        return res.status(404).json({ message: 'Contact not found' });  // Если не найден, возвращаем ошибку
-      }
-  
-      res.status(200).json({
-        status: 200,
-        message: `Successfully found contact with id ${req.params.contactId}!`,
-        data: contact,
-      });
-    } catch (err) {
-      res.status(500).json({
-        status: 500,
-        message: "Failed to retrieve contact",
-        error: err.message,
-      });
+// Получить один контакт по ID
+export const getContactController = async (req, res) => {
+  const { contactId } = req.params;
+  try {
+    const contact = await getContactById(contactId);
+    if (!contact) {
+      return res.status(404).json({ message: 'Contact not found' });
     }
-  };
+    res.status(200).json({
+      status: 200,
+      message: `Successfully found contact with id ${contactId}!`,
+      data: contact,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to retrieve contact', error: err.message });
+  }
+};
