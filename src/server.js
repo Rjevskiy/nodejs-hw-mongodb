@@ -1,21 +1,12 @@
 import express from 'express';
-import pino from 'pino-http';
-import cors from 'cors';
-import contactsRouter from './routes/contacts.js';
+import { contactsRouter } from './routes/contacts.js';  // Импортируем роут для контактов
 
-
+// Функция для запуска сервера
 export const startServer = (PORT) => {
-  const app = express();
+  const app = express();  // Создаем экземпляр Express
 
   // Используем middleware
-  app.use(pino());
-  app.use(cors());
-  app.use(express.json());
-
-  // Пример маршрута
-  app.get('/', (req, res) => {
-    res.send('Hello, world!');
-  });
+  app.use(express.json());  // Для парсинга JSON в теле запроса
 
   // Роут для /contacts
   app.use('/contacts', contactsRouter);  // Добавляем роут для получения контактов
