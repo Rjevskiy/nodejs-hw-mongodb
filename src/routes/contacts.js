@@ -1,9 +1,11 @@
 import express from 'express';
-import { addContact, patchContact } from '../controllers/contacts.js';  // Імпортуємо addContact
+import { addContact, patchContact, getAllContactsController, getContactController } from '../controllers/contacts.js';
 
 const contactsRouter = express.Router();
 
-contactsRouter.post('/', addContact);  // Реєструємо маршрут для створення контакту
-contactsRouter.patch('/:contactId', patchContact);  // Реєструємо маршрут для оновлення контакту
+contactsRouter.post('/', addContact);  // создание контакта
+contactsRouter.get('/', getAllContactsController);  // получение всех контактов
+contactsRouter.get('/:contactId', getContactController);  // получение контакта по ID
+contactsRouter.patch('/:contactId', patchContact);  // обновление контакта
 
 export { contactsRouter };
