@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 
-// Отримуємо шлях до поточного файлу та визначаємо шлях до contacts.json
-const __dirname = path.dirname(new URL(import.meta.url).pathname); // Імітація __dirname для ES модулів
-const contactsFilePath = path.join(__dirname, '../../scripts/contacts.json'); // Шлях до вашого JSON файлу
+// Получаем путь до текущего файла и определяем путь до contacts.json
+const __dirname = path.dirname(new URL(import.meta.url).pathname); // Имитация __dirname для ES модулей
+const contactsFilePath = path.join(__dirname, '../../scripts/contacts.json'); // Путь к вашему JSON файлу
 
-// Читання контактів з JSON файлу
+// Чтение контактов из JSON файла
 const readContactsFromFile = () => {
   try {
     const data = fs.readFileSync(contactsFilePath, 'utf8');
@@ -16,7 +16,7 @@ const readContactsFromFile = () => {
   }
 };
 
-// Запис контактів у JSON файл
+// Запись контактов в JSON файл
 const writeContactsToFile = (contacts) => {
   try {
     fs.writeFileSync(contactsFilePath, JSON.stringify(contacts, null, 2), 'utf8');
@@ -25,11 +25,11 @@ const writeContactsToFile = (contacts) => {
   }
 };
 
-// Функція для створення нового контакту
+// Функция для создания нового контакта
 export const createContact = ({ name, phoneNumber, email, isFavourite, contactType }) => {
   const contacts = readContactsFromFile();
   const newContact = {
-    id: Date.now().toString(), // Генерація унікального ID за допомогою timestamp
+    id: Date.now().toString(), // Генерация уникального ID с помощью timestamp
     name,
     phoneNumber,
     email: email || null,
@@ -41,7 +41,7 @@ export const createContact = ({ name, phoneNumber, email, isFavourite, contactTy
   return newContact;
 };
 
-// Функція для оновлення існуючого контакту
+// Функция для обновления существующего контакта
 export const updateContact = (contactId, updateData) => {
   const contacts = readContactsFromFile();
   const contactIndex = contacts.findIndex(contact => contact.id === contactId);
@@ -55,4 +55,15 @@ export const updateContact = (contactId, updateData) => {
   writeContactsToFile(contacts);
 
   return updatedContact;
+};
+
+// Функция для получения всех контактов
+export const getAllContacts = () => {
+  return readContactsFromFile();
+};
+
+// Функция для получения контакта по ID
+export const getContactById = (contactId) => {
+  const contacts = readContactsFromFile();
+  return contacts.find(contact => contact.id === contactId);
 };
