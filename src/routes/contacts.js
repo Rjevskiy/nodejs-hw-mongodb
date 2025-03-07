@@ -1,8 +1,7 @@
 import express from 'express';
-import { getAllContacts, getContactById } from '../services/contacts.js';  
+import { getAllContacts, getContactById } from '../services/contacts.js';
 
-const contactsRouter = express.Router();  
-
+const contactsRouter = express.Router();
 
 contactsRouter.get('/', async (req, res) => {
   try {
@@ -20,7 +19,6 @@ contactsRouter.get('/', async (req, res) => {
     });
   }
 });
-
 
 contactsRouter.get('/:contactId', async (req, res) => {
   const { contactId } = req.params;
@@ -47,4 +45,4 @@ contactsRouter.get('/:contactId', async (req, res) => {
   }
 });
 
-export { contactsRouter };  
+export default contactsRouter; // Исправленный экспорт!
