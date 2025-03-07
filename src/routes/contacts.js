@@ -1,48 +1,30 @@
 import express from 'express';
-import { getAllContacts, getContactById } from '../services/contacts.js';
+import { getAllContacts, getContactById, createContact } from '../services/contacts.js';
+import { addContact } from '../controllers/contacts.js';
 
 const contactsRouter = express.Router();
 
-contactsRouter.get('/', async (req, res) => {
+contactsRouter.get('/', async (req, res, next) => {
   try {
     const contacts = await getAllContacts();
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully fetched all contacts',
-      data: contacts,
-    });
+    res.status(200).json({ status: 200, message: 'Successfully fetched all contacts', data: contacts });
   } catch (err) {
-    res.status(500).json({
-      status: 500,
-      message: 'Failed to fetch contacts',
-      error: err.message,
-    });
+    next(err);
   }
 });
 
-contactsRouter.get('/:contactId', async (req, res) => {
-  const { contactId } = req.params;
+contactsRouter.get('/:contactId', async (req, res, next) => {
   try {
-    const contact = await getContactById(contactId);
-
+    const contact = await getContactById(req.params.contactId);
     if (!contact) {
-      return res.status(404).json({
-        message: 'Contact not found',
-      });
+      throw createError(404, 'Contact not found');
     }
-
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
-      data: contact,
-    });
+    res.status(200).json({ status: 200, message: `Successfully found contact with id ${req.params.contactId}!`, data: contact });
   } catch (err) {
-    res.status(500).json({
-      status: 500,
-      message: 'Failed to retrieve contact',
-      error: err.message,
-    });
+    next(err);
   }
 });
 
-export default contactsRouter; // Исправленный экспорт!
+contactsRouter.post('/', addContact);
+
+export { contactsRouter }; // ✅ Именованный экспорт
