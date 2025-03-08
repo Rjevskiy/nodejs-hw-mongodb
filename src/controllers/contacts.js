@@ -1,6 +1,9 @@
 // src/controllers/contacts.js
-import { createContact, updateContact, getAllContacts, getContactById } from '../services/contacts.js';
+import { createContact, updateContact, getAllContacts, getContactById, deleteContact } from '../services/contacts.js';
 import createError from 'http-errors';
+
+// Проверка валидности ObjectId MongoDB
+const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
 // Контроллер для добавления нового контакта
 export const addContact = async (req, res, next) => {
@@ -27,20 +30,29 @@ export const patchContact = async (req, res, next) => {
   const { contactId } = req.params;
   const updateData = req.body;
 
+  if (!isValidObjectId(contactId)) {
+    return next(createError(400, 'Invalid contact ID format'));
+  }
+
   try {
+    const existingContact = await getContactById(contactId);
+    if (!existingContact) {
+      return next(createError(404, 'Contact not found'));
+    }
+
     const updatedContact = await updateContact(contactId, updateData);
     res.status(200).json({
       status: 200,
-      message: 'Successfully patched a contact!',
+      message: 'Successfully updated the contact!',
       data: updatedContact,
     });
   } catch (error) {
-    next(createError(404, 'Contact not found'));
+    next(createError(500, 'Error updating contact'));
   }
 };
 
 // Контроллер для получения всех контактов
-export const getAllContactsController = async (req, res) => {
+export const getAllContactsController = async (req, res, next) => {
   try {
     const contacts = await getAllContacts();
     res.status(200).json({
@@ -49,17 +61,22 @@ export const getAllContactsController = async (req, res) => {
       data: contacts,
     });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to get contacts', error: err.message });
+    next(createError(500, 'Failed to get contacts'));
   }
 };
 
 // Контроллер для получения контакта по ID
-export const getContactController = async (req, res) => {
+export const getContactController = async (req, res, next) => {
   const { contactId } = req.params;
+
+  if (!isValidObjectId(contactId)) {
+    return next(createError(400, 'Invalid contact ID format'));
+  }
+
   try {
     const contact = await getContactById(contactId);
     if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
+      return next(createError(404, 'Contact not found'));
     }
     res.status(200).json({
       status: 200,
@@ -67,6 +84,30 @@ export const getContactController = async (req, res) => {
       data: contact,
     });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to retrieve contact', error: err.message });
+    next(createError(500, 'Failed to retrieve contact'));
+  }
+};
+
+// Контроллер для удаления контакта
+export const deleteContactController = async (req, res, next) => {
+  const { contactId } = req.params;
+
+  if (!isValidObjectId(contactId)) {
+    return next(createError(400, 'Invalid contact ID format'));
+  }
+
+  try {
+    const deletedContact = await deleteContact(contactId);
+    if (!deletedContact) {
+      return next(createError(404, 'Contact not found'));
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully deleted the contact!',
+      data: deletedContact,
+    });
+  } catch (err) {
+    next(createError(500, 'Failed to delete contact'));
   }
 };
