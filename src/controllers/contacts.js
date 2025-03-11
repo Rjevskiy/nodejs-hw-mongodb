@@ -6,11 +6,11 @@ import ctrlWrapper from "../utils/ctrlWrapper.js";
 const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
 // Контроллер добавления контакта
-const addContactFn = async (req, res, next) => {
+const addContactFn = async (req, res) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
   if (!name || !phoneNumber || !contactType) {
-    return next(createError(400, 'Missing required fields: name, phoneNumber, or contactType'));
+    throw createError(400, 'Missing required fields: name, phoneNumber, or contactType');
   }
 
   try {
@@ -21,23 +21,23 @@ const addContactFn = async (req, res, next) => {
       data: newContact,
     });
   } catch (error) {
-    next(createError(500, 'Error creating contact'));
+    throw createError(500, 'Error creating contact');
   }
 };
 
 // Контроллер обновления контакта
-const patchContactFn = async (req, res, next) => {
+const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
   const updateData = req.body;
 
   if (!isValidObjectId(contactId)) {
-    return next(createError(400, 'Invalid contact ID format'));
+    throw createError(400, 'Invalid contact ID format');
   }
 
   try {
     const existingContact = await getContactById(contactId);
     if (!existingContact) {
-      return next(createError(404, 'Contact not found'));
+      throw createError(404, 'Contact not found');
     }
 
     const updatedContact = await updateContact(contactId, updateData);
@@ -47,7 +47,7 @@ const patchContactFn = async (req, res, next) => {
       data: updatedContact,
     });
   } catch (error) {
-    next(createError(500, 'Error updating contact'));
+    throw createError(500, 'Error updating contact');
   }
 };
 
@@ -61,17 +61,17 @@ const getAllContactsFn = async (req, res) => {
 };
 
 // Контроллер получения контакта по ID
-const getContactFn = async (req, res, next) => {
+const getContactFn = async (req, res) => {
   const { contactId } = req.params;
 
   if (!isValidObjectId(contactId)) {
-    return next(createError(400, 'Invalid contact ID format'));
+    throw createError(400, 'Invalid contact ID format');
   }
 
   try {
     const contact = await getContactById(contactId);
     if (!contact) {
-      return next(createError(404, 'Contact not found'));
+      throw createError(404, 'Contact not found');
     }
     res.status(200).json({
       status: 200,
@@ -79,31 +79,31 @@ const getContactFn = async (req, res, next) => {
       data: contact,
     });
   } catch (err) {
-    next(createError(500, 'Failed to retrieve contact'));
+    throw createError(500, 'Failed to retrieve contact');
   }
 };
 
-// Контроллер удаления 
-const deleteContactFn = async (req, res, next) => {
+// Контроллер удаления контакта
+const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
 
   if (!isValidObjectId(contactId)) {
-    return next(createError(400, 'Invalid contact ID format'));
+    throw createError(400, 'Invalid contact ID format');
   }
 
   try {
     const deletedContact = await deleteContact(contactId);
     if (!deletedContact) {
-      return next(createError(404, 'Contact not found'));
+      throw createError(404, 'Contact not found');
     }
 
     res.status(204).send();  
   } catch (err) {
-    next(createError(500, 'Failed to delete contact'));
+    throw createError(500, 'Failed to delete contact');
   }
 };
 
-
+// Обернем контроллеры с помощью ctrlWrapper
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
