@@ -19,7 +19,7 @@ mongoose
 
     
     await Contact.deleteMany();
-    console.log('🗑️ Коллекция очищена');
+    console.log(' Коллекция очищена');
 
     
     await Contact.insertMany(contactsData);

@@ -1,19 +1,14 @@
 import express from 'express';
-import { contactsRouter } from './routes/contacts.js';  // правильный импорт
-import errorHandler from './middlewares/errorHandler.js';
-import notFoundHandler from './middlewares/notFoundHandler.js';
+import contactsRouter from './routes/contacts.js';
 
-export const startServer = (PORT) => {
-  const app = express();
+const app = express();
 
-  app.use(express.json());  // Для обработки JSON в запросах
+app.use(express.json());
+app.use('/api/contacts', contactsRouter);
 
-  app.use('/contacts', contactsRouter);  // Подключаем роутер
+const PORT = process.env.PORT || 3000;
 
-  app.use('*', notFoundHandler);  // Обработчик 404
-
-  app.use(errorHandler);  // Глобальный обработчик ошибок
-
+export const initializeServer = () => {  
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
