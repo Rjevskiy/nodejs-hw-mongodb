@@ -3,10 +3,10 @@ import { addContact, patchContact, getAllContactsController, getContactControlle
 
 const contactsRouter = express.Router();
 
-contactsRouter.post('/', addContact);
-contactsRouter.patch('/:contactId', patchContact);
 contactsRouter.get('/', getAllContactsController);
 contactsRouter.get('/:contactId', getContactController);
+contactsRouter.post('/', addContact);
+contactsRouter.patch('/:contactId', patchContact);
 contactsRouter.delete('/:contactId', deleteContactController);
 
-export default contactsRouter; 
+export default contactsRouter;
