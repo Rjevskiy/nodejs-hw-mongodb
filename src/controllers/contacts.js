@@ -13,16 +13,12 @@ const addContactFn = async (req, res) => {
     throw createError(400, 'Missing required fields: name, phoneNumber, or contactType');
   }
 
-  try {
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType });
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: newContact,
-    });
-  } catch (error) {
-    throw createError(500, 'Error creating contact');
-  }
+  const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType });
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
+  });
 };
 
 // Контроллер обновления контакта
@@ -34,21 +30,17 @@ const patchContactFn = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  try {
-    const existingContact = await getContactById(contactId);
-    if (!existingContact) {
-      throw createError(404, 'Contact not found');
-    }
-
-    const updatedContact = await updateContact(contactId, updateData);
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully updated the contact!',
-      data: updatedContact,
-    });
-  } catch (error) {
-    throw createError(500, 'Error updating contact');
+  const existingContact = await getContactById(contactId);
+  if (!existingContact) {
+    throw createError(404, 'Contact not found');
   }
+
+  const updatedContact = await updateContact(contactId, updateData);
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully updated the contact!',
+    data: updatedContact,
+  });
 };
 
 // Контроллер получения всех контактов
@@ -68,19 +60,15 @@ const getContactFn = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  try {
-    const contact = await getContactById(contactId);
-    if (!contact) {
-      throw createError(404, 'Contact not found');
-    }
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
-      data: contact,
-    });
-  } catch (err) {
-    throw createError(500, 'Failed to retrieve contact');
+  const contact = await getContactById(contactId);
+  if (!contact) {
+    throw createError(404, 'Contact not found');
   }
+  res.status(200).json({
+    status: 200,
+    message: `Successfully found contact with id ${contactId}!`,
+    data: contact,
+  });
 };
 
 // Контроллер удаления контакта
@@ -91,16 +79,12 @@ const deleteContactFn = async (req, res) => {
     throw createError(400, 'Invalid contact ID format');
   }
 
-  try {
-    const deletedContact = await deleteContact(contactId);
-    if (!deletedContact) {
-      throw createError(404, 'Contact not found');
-    }
-
-    res.status(204).send();  
-  } catch (err) {
-    throw createError(500, 'Failed to delete contact');
+  const deletedContact = await deleteContact(contactId);
+  if (!deletedContact) {
+    throw createError(404, 'Contact not found');
   }
+
+  res.status(204).send();  
 };
 
 // Обернем контроллеры с помощью ctrlWrapper
