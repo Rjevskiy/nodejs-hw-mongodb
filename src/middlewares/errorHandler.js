@@ -5,7 +5,7 @@ const errorHandler = (err, req, res, next) => {
       status: statusCode,
       message: err.message || 'Something went wrong', 
       data: err.data || null, 
-      stack: process.env.NODE_ENV === 'development' ? err.stack : null, 
+      
     });
   };
   
