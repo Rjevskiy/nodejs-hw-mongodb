@@ -1,8 +1,8 @@
 import Contact from '../models/Contact.js';
 
 // Получение всех контактов
-export const getAllContacts = async () => {
-  return await Contact.find();
+export const getAllContacts = async (filter, sortOptions, skip, limit) => {
+  return await Contact.find(filter).sort(sortOptions).skip(skip).limit(limit);
 };
 
 // Получение контакт ID
