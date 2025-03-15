@@ -22,7 +22,7 @@ mongoose
   .connect(mongoURI)
   .then(() => {
     console.log('MongoDB connected');
-    startServer(); // Запускаем сервер только после успешного подключения к БД
+    startServer(); 
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
@@ -35,10 +35,10 @@ app.use(express.json());
 
 app.use('/contacts', contactsRouter);
 
-// Обработчик несуществующих маршрутов
+
 app.use(notFoundHandler);
 
-// Обработчик ошибок
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
