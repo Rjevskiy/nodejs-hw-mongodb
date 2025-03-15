@@ -1,12 +1,7 @@
-import {
-  createContact,
-  updateContact,
-  getAllContacts,
-  getContactById,
-  deleteContact,
-} from "../services/contacts.js";
+import { createContact, updateContact, getAllContacts, getContactById, deleteContact } from "../services/contacts.js";
 import createError from "http-errors";
 import ctrlWrapper from "../utils/ctrlWrapper.js";
+import Contact from "../models/Contact.js";  
 
 const addContactFn = async (req, res) => {
   const newContact = await createContact(req.body);
@@ -34,20 +29,47 @@ const patchContactFn = async (req, res) => {
 };
 
 const getAllContactsFn = async (req, res) => {
-  const { page = 1, limit = 10, sortBy = "name", sortOrder = "asc", contactType, isFavourite } = req.query;
+  const { 
+    page = 1, 
+    perPage = 10, 
+    sortBy = "name", 
+    sortOrder = "asc", 
+    contactType,  
+    isFavourite    
+  } = req.query;
 
   const filter = {};
-  if (contactType) filter.contactType = contactType;
-  if (isFavourite !== undefined) filter.isFavourite = isFavourite === "true";
 
-  const skip = (page - 1) * limit;
+  if (contactType) {
+    filter.contactType = contactType;
+  }
+
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === "true"; 
+  }
+
+  const skip = (parseInt(page) - 1) * parseInt(perPage);
   const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
-  const contacts = await getAllContacts(filter, sortOptions, skip, Number(limit));
+  const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
+
+  const totalItems = await Contact.countDocuments(filter);
+  const totalPages = Math.ceil(totalItems / perPage);
+  const hasPreviousPage = page > 1;
+  const hasNextPage = page < totalPages;
 
   res.status(200).json({
-    message: "Successfully retrieved contacts!",
-    data: contacts,
+    status: 200,
+    message: "Successfully found contacts!",
+    data: {
+      data: contacts,
+      page: parseInt(page),
+      perPage: parseInt(perPage),
+      totalItems,
+      totalPages,
+      hasPreviousPage,
+      hasNextPage,
+    },
   });
 };
 
@@ -58,10 +80,19 @@ const getContactFn = async (req, res) => {
   if (!contact) {
     throw createError(404, "Contact not found");
   }
+
   res.status(200).json({
     status: 200,
-    message: `Successfully found contact with id ${contactId}!`,
-    data: contact,
+    message: "Successfully found contact with id " + contactId + "!",
+    data: {
+      data: contact,
+      page: 1,
+      perPage: 1,
+      totalItems: 1,
+      totalPages: 1,
+      hasPreviousPage: false,
+      hasNextPage: false,
+    },
   });
 };
 
@@ -73,7 +104,11 @@ const deleteContactFn = async (req, res) => {
     throw createError(404, "Contact not found");
   }
 
-  res.status(204).send();
+  res.status(200).json({
+    status: 200,
+    message: "Successfully deleted the contact!",
+    data: deletedContact,
+  });
 };
 
 export const addContact = ctrlWrapper(addContactFn);
