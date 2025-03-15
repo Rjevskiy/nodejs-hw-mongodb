@@ -2,10 +2,10 @@ import { createContact, updateContact, getAllContacts, getContactById, deleteCon
 import createError from 'http-errors';
 import ctrlWrapper from "../utils/ctrlWrapper.js";
 
-// Проверка валидности на MongoDB
+
 const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
-// Контроллер добавления контакта
+
 const addContactFn = async (req, res) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
@@ -21,7 +21,7 @@ const addContactFn = async (req, res) => {
   });
 };
 
-// Контроллер обновления контакта
+
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
   const updateData = req.body;
@@ -43,7 +43,7 @@ const patchContactFn = async (req, res) => {
   });
 };
 
-// Контроллер получения всех контактов
+
 const getAllContactsFn = async (req, res) => {
   const contacts = await getAllContacts();
   res.status(200).json({
@@ -52,7 +52,7 @@ const getAllContactsFn = async (req, res) => {
   });
 };
 
-// Контроллер получения контакта по ID
+
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
 
@@ -71,7 +71,7 @@ const getContactFn = async (req, res) => {
   });
 };
 
-// Контроллер удаления контакта
+
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
 
@@ -87,7 +87,7 @@ const deleteContactFn = async (req, res) => {
   res.status(204).send();  
 };
 
-// Обернем контроллеры с помощью ctrlWrapper
+
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
