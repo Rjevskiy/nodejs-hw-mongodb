@@ -4,35 +4,36 @@ const contactSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     phoneNumber: {
       type: String,
-      required: true
+      required: true,
     },
     email: {
       type: String,
-      required: false
+      required: false,
+      match: [/.+@.+\..+/, 'Please provide a valid email address'], // Валидация для email
     },
     isFavourite: {
       type: Boolean,
-      default: false
+      default: false,
     },
     contactType: {
       type: String,
       enum: ['work', 'home', 'personal'],
       default: 'personal',
-      required: true
-    }
+      required: true,
+    },
   },
   {
     timestamps: true,
     toJSON: {
       transform: (doc, ret) => {
-        delete ret.__v;  
+        delete ret.__v;
         return ret;
-      }
-    }
+      },
+    },
   }
 );
 

@@ -12,6 +12,7 @@ import isValidId from "../middlewares/isValidId.js";
 
 const contactsRouter = express.Router();
 
+// Обновляем маршрут для получения всех контактов с сортировкой
 contactsRouter.get("/", getAllContactsController);
 contactsRouter.get("/:contactId", isValidId, getContactController);
 contactsRouter.post("/", validateBody(contactSchema), addContact); 
