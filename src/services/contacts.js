@@ -1,13 +1,11 @@
 import Contact from '../models/Contact.js';
 
 // Получение всех контактов с фильтром, сортировкой, пагинацией
-export const getAllContacts = async ({ filter, sortBy, sortOrder, skip, limit }) => {
-  const sortOptions = {};
-  if (sortBy) {
-    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
-  }
-  
-  return await Contact.find(filter).sort(sortOptions).skip(skip).limit(limit);
+export const getAllContacts = async (filter, sortOptions, skip, limit) => {
+  return await Contact.find(filter)
+    .skip(skip)
+    .limit(limit)
+    .sort(sortOptions);
 };
 
 // Получение контакта по ID
@@ -35,3 +33,5 @@ export const updateContact = async (contactId, updateData) => {
 export const deleteContact = async (contactId) => {
   return await Contact.findByIdAndDelete(contactId);
 };
+
+
