@@ -13,7 +13,7 @@ const contactSchema = new mongoose.Schema(
     email: {
       type: String,
       required: false,
-      match: [/.+@.+\..+/, 'Please provide a valid email address'], // Валидация для email
+      match: [/.+@.+\..+/, 'Please provide a valid email address'], 
     },
     isFavourite: {
       type: Boolean,
