@@ -1,13 +1,41 @@
-import { createContact, updateContact, getAllContacts, getContactById, deleteContact } from "../services/contacts.js";
-import createError from "http-errors";
-import ctrlWrapper from "../utils/ctrlWrapper.js";
-import Contact from "../models/Contact.js";
+import createHttpError from 'http-errors';
+import { registerUser } from '../services/auth.js';
+import { createContact, updateContact, getAllContacts, getContactById, deleteContact } from '../services/contacts.js';
+import ctrlWrapper from '../utils/ctrlWrapper.js';
+import Contact from '../models/Contact.js';
 
-// Функция для добавления контакта
+// Контроллер для регистрации пользователя
+export const registerUserController = async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      throw createHttpError(400, 'Missing required fields');
+    }
+
+    const newUser = await registerUser({ name, email, password });
+
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully registered a user!',
+      data: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        createdAt: newUser.createdAt,
+        updatedAt: newUser.updatedAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Контроллер для добавления контакта
 const addContactFn = async (req, res) => {
   const { contactType } = req.body;
 
-  // Валидация для contactType
+  // Валидация типа контакта
   const validContactTypes = ['work', 'home', 'personal'];
   if (contactType && !validContactTypes.includes(contactType)) {
     return res.status(400).json({
@@ -20,19 +48,19 @@ const addContactFn = async (req, res) => {
     const newContact = await createContact(req.body);
     res.status(201).json({
       status: 201,
-      message: "Successfully created a contact!",
+      message: 'Successfully created a contact!',
       data: newContact,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while creating the contact.",
+      message: 'Server error occurred while creating the contact.',
     });
   }
 };
 
-// Функция для обновления контакта
+// Контроллер для обновления контакта
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
 
@@ -40,16 +68,17 @@ const patchContactFn = async (req, res) => {
   if (!existingContact) {
     return res.status(404).json({
       status: 404,
+      message: 'Contact not found',
     });
   }
 
   const { name, phoneNumber } = req.body;
 
-  // Проверка на обязательные поля для обновления
+  // Проверка обязательных полей
   if (!name || !phoneNumber) {
     return res.status(400).json({
       status: 400,
-      message: "\"name\" and \"phoneNumber\" are required",
+      message: '"name" and "phoneNumber" are required',
     });
   }
 
@@ -57,21 +86,21 @@ const patchContactFn = async (req, res) => {
     const updatedContact = await updateContact(contactId, req.body);
     res.status(200).json({
       status: 200,
-      message: "Successfully updated the contact!",
+      message: 'Successfully updated the contact!',
       data: updatedContact,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while updating the contact.",
+      message: 'Server error occurred while updating the contact.',
     });
   }
 };
 
-// Функция для получения всех контактов
+// Контроллер для получения всех контактов
 const getAllContactsFn = async (req, res) => {
-  const { page = 1, perPage = 10, sortBy = "name", sortOrder = "asc", contactType, isFavourite } = req.query;
+  const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', contactType, isFavourite } = req.query;
 
   const filter = {};
 
@@ -80,11 +109,11 @@ const getAllContactsFn = async (req, res) => {
   }
 
   if (isFavourite !== undefined) {
-    filter.isFavourite = isFavourite === "true";
+    filter.isFavourite = isFavourite === 'true';
   }
 
   const skip = (parseInt(page) - 1) * parseInt(perPage);
-  const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+  const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   try {
     const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
@@ -96,7 +125,7 @@ const getAllContactsFn = async (req, res) => {
 
     res.status(200).json({
       status: 200,
-      message: "Successfully found contacts!",
+      message: 'Successfully found contacts!',
       data: {
         data: contacts,
         page: parseInt(page),
@@ -111,12 +140,12 @@ const getAllContactsFn = async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while retrieving contacts.",
+      message: 'Server error occurred while retrieving contacts.',
     });
   }
 };
 
-// Функция для получения одного контакта
+// Контроллер для получения одного контакта
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
 
@@ -125,6 +154,7 @@ const getContactFn = async (req, res) => {
     if (!contact) {
       return res.status(404).json({
         status: 404,
+        message: 'Contact not found',
       });
     }
 
@@ -137,12 +167,12 @@ const getContactFn = async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while retrieving the contact.",
+      message: 'Server error occurred while retrieving the contact.',
     });
   }
 };
 
-// Функция для удаления контакта
+// Контроллер для удаления контакта
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
 
@@ -150,10 +180,10 @@ const deleteContactFn = async (req, res) => {
   if (!deletedContact) {
     return res.status(404).json({
       status: 404,
+      message: 'Contact not found',
     });
   }
 
-  // ✅ Правильный ответ с 204 No Content (без тела)
   res.status(204).send();
 };
 
