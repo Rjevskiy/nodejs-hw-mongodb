@@ -14,4 +14,4 @@ export const updateContactSchema = Joi.object({
   email: Joi.string().email(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string().valid("work", "personal", "home", "other"),
-}).min(1); // Обязательно передавать хотя бы одно поле
+}).min(1); 
