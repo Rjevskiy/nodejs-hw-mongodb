@@ -44,6 +44,17 @@ export const loginUser = async (email, password) => {
     expiresIn: "30d",
   });
 
-  // Просто возвращаем токены, без вложенности в data
+  // Возвращаем токены без вложенности в data
   return { accessToken, refreshToken }; 
+};
+
+// Сервис для логаута
+export const logoutUserService = (req) => {
+  return new Promise((resolve, reject) => {
+    // Удаляем cookies с токенами
+    req.res.clearCookie('accessToken');
+    req.res.clearCookie('refreshToken');
+
+    resolve();
+  });
 };

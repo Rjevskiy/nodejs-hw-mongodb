@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser'; // Добавляем cookie-parser
 import contactsRouter from './routes/contacts.js'; 
 import authRouter from './routes/auth.js';  
 import errorHandler from './middlewares/errorHandler.js';
@@ -10,8 +11,7 @@ dotenv.config();
 console.log("ACCESS_TOKEN_SECRET:", process.env.ACCESS_TOKEN_SECRET);
 console.log("REFRESH_TOKEN_SECRET:", process.env.REFRESH_TOKEN_SECRET);
 
-
-
+// Проверка наличия обязательных переменных окружения
 const requiredEnvVars = ['MONGODB_USER', 'MONGODB_PASSWORD', 'MONGODB_URL', 'MONGODB_DB', 'PORT'];
 
 requiredEnvVars.forEach((envVar) => {
@@ -21,25 +21,35 @@ requiredEnvVars.forEach((envVar) => {
   }
 });
 
+// Формирование строки подключения к MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 const app = express();
 
+// Подключаем cookie-parser для работы с cookies
+app.use(cookieParser());
+
+// Мидлвар для парсинга JSON
 app.use(express.json());
 
-
+// Роуты
 app.use('/contacts', contactsRouter);
 app.use('/auth', authRouter);  
 
+// Обработка 404 ошибок
 app.use(notFoundHandler);
+
+// Обработка остальных ошибок
 app.use(errorHandler);
 
+// Функция старта сервера
 const startServer = () => {
   app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
   });
 };
 
+// Подключение к MongoDB и запуск сервера
 mongoose
   .connect(mongoURI)
   .then(() => {

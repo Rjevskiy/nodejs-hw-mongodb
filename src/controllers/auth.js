@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { registerUser, loginUser } from "../services/auth.js";
+import { registerUser, loginUser, logoutUserService } from "../services/auth.js";
 
 export const registerUserController = async (req, res, next) => {
   try {
@@ -35,13 +35,28 @@ export const loginUserController = async (req, res, next) => {
       throw createHttpError(400, "Missing required fields");
     }
 
-    const accessToken = await loginUser(email, password);
+    const { accessToken, refreshToken } = await loginUser(email, password);
+
+    // Устанавливаем cookies с токенами
+    res.cookie("accessToken", accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
     res.status(200).json({
       status: 200,
       message: "Successfully logged in an user!",
       data: { accessToken },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Контроллер для логаута
+export const logoutUserController = async (req, res, next) => {
+  try {
+    await logoutUserService(req);  // Вызовем сервис для удаления токенов
+
+    res.status(204).send();  // Отправим статус 204 без тела ответа
   } catch (error) {
     next(error);
   }
