@@ -2,24 +2,17 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
+    name: { type: String, required: true },
     email: {
       type: String,
       required: true,
       unique: true,
-      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+    password: { type: String, required: true },
+    refreshToken: { type: String },
   },
-  {
-    timestamps: true, 
-  }
+  { timestamps: true }
 );
 
 const User = mongoose.model("User", userSchema);
