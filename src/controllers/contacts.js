@@ -34,6 +34,7 @@ export const registerUserController = async (req, res, next) => {
 // Контроллер для добавления контакта
 const addContactFn = async (req, res) => {
   const { contactType } = req.body;
+  const userId = req.user._id; // Получаем userId из аутентифицированного пользователя
 
   // Валидация типа контакта
   const validContactTypes = ['work', 'home', 'personal'];
@@ -45,7 +46,7 @@ const addContactFn = async (req, res) => {
   }
 
   try {
-    const newContact = await createContact(req.body);
+    const newContact = await createContact({ ...req.body, userId }); // Добавляем userId
     res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
@@ -63,8 +64,9 @@ const addContactFn = async (req, res) => {
 // Контроллер для обновления контакта
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
+  const userId = req.user._id; // Получаем userId из аутентифицированного пользователя
 
-  const existingContact = await getContactById(contactId);
+  const existingContact = await getContactById(contactId, userId); // Добавляем фильтрацию по userId
   if (!existingContact) {
     return res.status(404).json({
       status: 404,
@@ -83,7 +85,7 @@ const patchContactFn = async (req, res) => {
   }
 
   try {
-    const updatedContact = await updateContact(contactId, req.body);
+    const updatedContact = await updateContact(contactId, userId, req.body); // Обновляем контакт с учетом userId
     res.status(200).json({
       status: 200,
       message: 'Successfully updated the contact!',
@@ -101,8 +103,9 @@ const patchContactFn = async (req, res) => {
 // Контроллер для получения всех контактов
 const getAllContactsFn = async (req, res) => {
   const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', contactType, isFavourite } = req.query;
+  const userId = req.user._id; // Получаем userId из аутентифицированного пользователя
 
-  const filter = {};
+  const filter = { userId }; // Добавляем фильтрацию по userId
 
   if (contactType) {
     filter.contactType = contactType;
@@ -116,7 +119,7 @@ const getAllContactsFn = async (req, res) => {
   const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   try {
-    const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
+    const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage)); // Используем filter с userId
 
     const totalItems = await Contact.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
@@ -148,9 +151,10 @@ const getAllContactsFn = async (req, res) => {
 // Контроллер для получения одного контакта
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
+  const userId = req.user._id; // Получаем userId из аутентифицированного пользователя
 
   try {
-    const contact = await getContactById(contactId);
+    const contact = await getContactById(contactId, userId); // Добавляем фильтрацию по userId
     if (!contact) {
       return res.status(404).json({
         status: 404,
@@ -175,8 +179,9 @@ const getContactFn = async (req, res) => {
 // Контроллер для удаления контакта
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
+  const userId = req.user._id; // Получаем userId из аутентифицированного пользователя
 
-  const deletedContact = await deleteContact(contactId);
+  const deletedContact = await deleteContact(contactId, userId); // Удаляем контакт с учетом userId
   if (!deletedContact) {
     return res.status(404).json({
       status: 404,
