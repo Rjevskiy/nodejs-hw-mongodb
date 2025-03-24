@@ -3,7 +3,7 @@ import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// Доступ к переменным окружения
+
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
@@ -35,7 +35,7 @@ export const loginUser = async (email, password) => {
     throw createHttpError(401, "Invalid email or password");
   }
 
-  // Генерация токенов
+
   const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
   });
@@ -44,14 +44,14 @@ export const loginUser = async (email, password) => {
     expiresIn: "30d",
   });
 
-  // Возвращаем токены без вложенности в data
+  
   return { accessToken, refreshToken }; 
 };
 
-// Сервис для логаута
+
 export const logoutUserService = (req) => {
   return new Promise((resolve, reject) => {
-    // Удаляем cookies с токенами
+    
     req.res.clearCookie('accessToken');
     req.res.clearCookie('refreshToken');
 

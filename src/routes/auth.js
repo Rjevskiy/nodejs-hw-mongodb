@@ -1,10 +1,17 @@
 import express from "express";
 import { registerUserController, loginUserController, logoutUserController } from "../controllers/auth.js";
+import { validateBody } from "../middlewares/validateBody.js";
+
+
+
+
+import { registerSchema, loginSchema } from "../schemas/authSchema.js";
 
 const router = express.Router();
 
-router.post("/register", registerUserController);
-router.post("/login", loginUserController);
-router.post("/logout", logoutUserController);  // Новый роут для логаута
+
+router.post("/register", validateBody(registerSchema), registerUserController);
+router.post("/login", validateBody(loginSchema), loginUserController);
+router.post("/logout", logoutUserController);
 
 export default router;
