@@ -37,7 +37,7 @@ export const loginUserController = async (req, res, next) => {
 
     const { accessToken, refreshToken } = await loginUser(email, password);
 
-    // Устанавливаем cookies с токенами
+    
     res.cookie("accessToken", accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
     res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
@@ -51,12 +51,12 @@ export const loginUserController = async (req, res, next) => {
   }
 };
 
-// Контроллер для логаута
+
 export const logoutUserController = async (req, res, next) => {
   try {
-    await logoutUserService(req);  // Вызовем сервис для удаления токенов
+    await logoutUserService(req);  
 
-    res.status(204).send();  // Отправим статус 204 без тела ответа
+    res.status(204).send();  
   } catch (error) {
     next(error);
   }

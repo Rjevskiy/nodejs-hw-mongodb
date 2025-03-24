@@ -13,12 +13,12 @@ import isValidId from "../middlewares/isValidId.js";
 
 const contactsRouter = express.Router();
 
-// 👇 Применяем authenticate ко всем роутам
+
 contactsRouter.use(authenticate);
 
-contactsRouter.get("/", getAllContactsController); // Получаем все контакты для текущего пользователя
-contactsRouter.get("/:contactId", isValidId, getContactController); // Получаем один контакт для текущего пользователя
-contactsRouter.post("/", validateBody(contactSchema), addContact); // Создаем контакт для текущего пользователя
+contactsRouter.get("/", getAllContactsController); 
+contactsRouter.get("/:contactId", isValidId, getContactController); 
+contactsRouter.post("/", validateBody(contactSchema), addContact); 
 contactsRouter.patch("/:contactId", isValidId, validateBody(updateContactSchema), patchContact);
 contactsRouter.delete("/:contactId", isValidId, deleteContactController);
 

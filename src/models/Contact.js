@@ -27,7 +27,7 @@ const contactSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Связь с моделью User
+      ref: 'User', 
       required: true,
     },
   },
