@@ -7,7 +7,7 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const authenticate = async (req, res, next) => {
   try {
 
-    console.log("👉 Authorization Header:", req.headers.authorization);
+    console.log(" Authorization Header:", req.headers.authorization);
 
     const authHeader = req.headers.authorization;
 
