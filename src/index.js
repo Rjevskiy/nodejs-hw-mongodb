@@ -9,7 +9,7 @@ import authRouter from './routes/auth.js';
 import errorHandler from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 
-dotenv.config();
+dotenv.config({ path: '.env' });
 
 
 //console.log(process.env);
