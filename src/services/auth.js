@@ -3,9 +3,16 @@ import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
+// Логируем значения переменных окружения для отладки
+console.log("ACCESS_TOKEN_SECRET:", ACCESS_TOKEN_SECRET);
+console.log("REFRESH_TOKEN_SECRET:", REFRESH_TOKEN_SECRET);
+
+if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
+  throw new Error("Access or Refresh Token Secret is missing!");
+}
 
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
@@ -35,26 +42,31 @@ export const loginUser = async (email, password) => {
     throw createHttpError(401, "Invalid email or password");
   }
 
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+  const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: "30d" });
 
-  const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
-  });
-
-  const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "30d",
-  });
-
-  
-  return { accessToken, refreshToken }; 
+  return { accessToken, refreshToken };
 };
 
-
 export const logoutUserService = (req) => {
-  return new Promise((resolve, reject) => {
-    
-    req.res.clearCookie('accessToken');
-    req.res.clearCookie('refreshToken');
-
+  return new Promise((resolve) => {
+    req.res.clearCookie("accessToken");
+    req.res.clearCookie("refreshToken");
     resolve();
   });
+};
+
+// Функция для обновления токенов
+export const verifyAndRefreshToken = async (refreshToken) => {
+  try {
+    const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+
+    const newAccessToken = jwt.sign({ id: payload.id }, ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m",
+    });
+
+    return newAccessToken;
+  } catch (error) {
+    throw createHttpError(403, "Invalid or expired refresh token");
+  }
 };

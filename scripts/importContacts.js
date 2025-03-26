@@ -11,23 +11,27 @@ const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGOD
 mongoose
   .connect(mongoURI)
   .then(async () => {
-    console.log(' MongoDB подключена');
+    console.log('MongoDB подключена');
 
+    const filePath = path.resolve('scripts', 'contacts.json');
     
-    const filePath = path.resolve('scripts', 'contacts.json');  
-    const contactsData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    let contactsData;
+    try {
+      contactsData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    } catch (err) {
+      console.error('Ошибка чтения файла contacts.json:', err);
+      process.exit(1);
+    }
 
-    
     await Contact.deleteMany();
-    console.log(' Коллекция очищена');
+    console.log('Коллекция очищена');
 
-    
     await Contact.insertMany(contactsData);
-    console.log(' Данные успешно импортированы');
+    console.log('Данные успешно импортированы');
 
     mongoose.connection.close();
   })
   .catch((err) => {
-    console.error(' Ошибка подключения:', err.message);
+    console.error('Ошибка подключения:', err.message);
     mongoose.connection.close();
   });

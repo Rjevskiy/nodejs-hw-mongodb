@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { registerUser, loginUser, logoutUserService } from "../services/auth.js";
+import { registerUser, loginUser, logoutUserService, verifyAndRefreshToken } from "../services/auth.js";
 
 export const registerUserController = async (req, res, next) => {
   try {
@@ -37,9 +37,14 @@ export const loginUserController = async (req, res, next) => {
 
     const { accessToken, refreshToken } = await loginUser(email, password);
 
-    
-    res.cookie("accessToken", accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
 
     res.status(200).json({
       status: 200,
@@ -51,12 +56,37 @@ export const loginUserController = async (req, res, next) => {
   }
 };
 
-
 export const logoutUserController = async (req, res, next) => {
   try {
-    await logoutUserService(req);  
+    await logoutUserService(req);
 
-    res.status(204).send();  
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+//  контроллер для обновления токена
+export const refreshTokenController = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken) {
+      throw createHttpError(401, "Refresh token is missing");
+    }
+
+    const newAccessToken = await verifyAndRefreshToken(refreshToken);
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "Access token refreshed successfully!",
+      data: { accessToken: newAccessToken },
+    });
   } catch (error) {
     next(error);
   }
