@@ -40,10 +40,12 @@ export const loginUserController = async (req, res, next) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
 
     res.status(200).json({
@@ -60,13 +62,16 @@ export const logoutUserController = async (req, res, next) => {
   try {
     await logoutUserService(req);
 
+    res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
+    res.clearCookie("accessToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
+
     res.status(204).send();
   } catch (error) {
     next(error);
   }
 };
 
-//  контроллер для обновления токена
+// Контроллер для обновления токена
 export const refreshTokenController = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;
@@ -80,6 +85,7 @@ export const refreshTokenController = async (req, res, next) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
 
     res.status(200).json({

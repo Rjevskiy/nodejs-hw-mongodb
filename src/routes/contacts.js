@@ -1,5 +1,7 @@
 import express from "express";
-import authenticate from "../middlewares/authenticate.js";
+import  authenticate  from "../middlewares/authenticate.js"; // Исправленный импорт
+import { validateBody } from "../middlewares/validateBody.js";
+import isValidId from "../middlewares/isValidId.js";
 import {
   addContact,
   patchContact,
@@ -7,18 +9,15 @@ import {
   getContactController,
   deleteContactController,
 } from "../controllers/contacts.js";
-import { validateBody } from "../middlewares/validateBody.js";
 import { contactSchema, updateContactSchema } from "../schemas/contactSchema.js";
-import isValidId from "../middlewares/isValidId.js";
 
 const contactsRouter = express.Router();
 
-contactsRouter.use(authenticate);
-
-contactsRouter.get("/", getAllContactsController); 
-contactsRouter.get("/:contactId", isValidId, getContactController); 
-contactsRouter.post("/", validateBody(contactSchema), addContact); 
-contactsRouter.patch("/:contactId", isValidId, validateBody(updateContactSchema), patchContact);
-contactsRouter.delete("/:contactId", isValidId, deleteContactController);
+// Защищаем маршруты авторизацией
+contactsRouter.get("/", authenticate, getAllContactsController);
+contactsRouter.get("/:contactId", authenticate, isValidId, getContactController);
+contactsRouter.post("/", authenticate, validateBody(contactSchema), addContact);
+contactsRouter.patch("/:contactId", authenticate, isValidId, validateBody(updateContactSchema), patchContact);
+contactsRouter.delete("/:contactId", authenticate, isValidId, deleteContactController);
 
 export default contactsRouter;

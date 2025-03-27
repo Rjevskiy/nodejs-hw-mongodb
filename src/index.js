@@ -1,68 +1,70 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import morgan from "morgan";
 
-import express from 'express';
+import contactsRouter from "./routes/contacts.js";
+import authRouter from "./routes/auth.js";
+import errorHandler from "./middlewares/errorHandler.js";
+import notFoundHandler from "./middlewares/notFoundHandler.js";
 
-import mongoose from 'mongoose';
-import cookieParser from 'cookie-parser';
-import contactsRouter from './routes/contacts.js';
-import authRouter from './routes/auth.js';
-import errorHandler from './middlewares/errorHandler.js';
-import notFoundHandler from './middlewares/notFoundHandler.js';
+// Загружаем переменные окружения
+dotenv.config({ path: ".env" });
 
-dotenv.config({ path: '.env' });
+// Проверяем, загружены ли все переменные окружения
+const requiredEnvVars = ["MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT"];
+const requiredAuthVars = ["ACCESS_TOKEN_SECRET", "REFRESH_TOKEN_SECRET"];
 
-
-//console.log(process.env);
-//console.log('All environment variables:', process.env);  // Это выведет все переменные окружения
-//console.log("ACCESS_TOKEN_SECRET:", process.env.ACCESS_TOKEN_SECRET);
-//console.log("REFRESH_TOKEN_SECRET:", process.env.REFRESH_TOKEN_SECRET);
-
-
-const requiredEnvVars = ['MONGODB_USER', 'MONGODB_PASSWORD', 'MONGODB_URL', 'MONGODB_DB', 'PORT'];
-const requiredAuthVars = ['ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
-
-// Проверяем, что все необходимые переменные окружения заданы
-requiredEnvVars.forEach((envVar) => {
+[...requiredEnvVars, ...requiredAuthVars].forEach((envVar) => {
   if (!process.env[envVar]) {
-    console.error(`Missing required environment variable: ${envVar}`);
+    console.error(`Ошибка: Переменная окружения ${envVar} отсутствует!`);
     process.exit(1);
   }
 });
 
-requiredAuthVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    console.error(`Missing required auth environment variable: ${envVar}`);
-    process.exit(1);
-  }
+console.log("Загруженные переменные окружения:", {
+  PORT: process.env.PORT,
+  MONGODB_URL: process.env.MONGODB_URL,
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ? "Загружен" : "Нет",
 });
+
+// Создаем сервер
+const app = express();
+
+// Подключаем middleware
+app.use(cors());
+app.use(morgan("dev"));
+app.use(cookieParser());
+app.use(express.json());
+
+// Middleware для установки Content-Type
+app.use((req, res, next) => {
+  res.setHeader("Content-Type", "application/json");
+  next();
+});
+
+// Роуты
+app.use("/contacts", contactsRouter);
+app.use("/auth", authRouter);
+
+// Обработчики ошибок
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Подключение к MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
-const app = express();
-
-app.use(cookieParser());
-app.use(express.json());
-app.use('/contacts', contactsRouter);
-app.use('/auth', authRouter);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
-
-const startServer = () => {
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
-  });
-};
-
-// Подключение и запуск сервера
 mongoose
   .connect(mongoURI)
   .then(() => {
-    console.log('MongoDB connected');
-    startServer();
+    console.log("MongoDB подключена!");
+    app.listen(process.env.PORT, () => {
+      console.log(`Сервер запущен на http://localhost:${process.env.PORT}`);
+    });
   })
   .catch((err) => {
-    console.error('MongoDB connection error:', err);
+    console.error("Ошибка подключения к MongoDB:", err.message);
     process.exit(1);
   });
