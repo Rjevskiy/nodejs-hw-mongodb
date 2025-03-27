@@ -71,7 +71,7 @@ export const logoutUserController = async (req, res, next) => {
   }
 };
 
-// Контроллер для обновления токена
+
 export const refreshTokenController = async (req, res, next) => {
   try {
     const { refreshToken } = req.cookies;

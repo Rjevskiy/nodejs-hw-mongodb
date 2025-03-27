@@ -6,7 +6,7 @@ import User from "../models/User.js";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
-// Логируем значения переменных окружения для отладки
+// Логируем для отладки
 console.log("ACCESS_TOKEN_SECRET:", ACCESS_TOKEN_SECRET);
 console.log("REFRESH_TOKEN_SECRET:", REFRESH_TOKEN_SECRET);
 
@@ -56,7 +56,7 @@ export const logoutUserService = (req) => {
   });
 };
 
-// Функция для обновления токенов
+
 export const verifyAndRefreshToken = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);

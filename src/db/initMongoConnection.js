@@ -5,10 +5,6 @@ import mongoose from 'mongoose';
 
 dotenv.config({ path: './.env' });
 
-//console.log(process.env);
-//console.log('All environment variables:', process.env);  // Это выведет все переменные окружения
-//console.log("ACCESS_TOKEN_SECRET:", process.env.ACCESS_TOKEN_SECRET);
-//console.log("REFRESH_TOKEN_SECRET:", process.env.REFRESH_TOKEN_SECRET);
 
 const { MONGODB_USER, MONGODB_PASSWORD, MONGODB_URL, MONGODB_DB } = process.env;
 
