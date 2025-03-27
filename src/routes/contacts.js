@@ -13,7 +13,7 @@ import { contactSchema, updateContactSchema } from "../schemas/contactSchema.js"
 
 const contactsRouter = express.Router();
 
-// Защищаем маршруты авторизацией
+
 contactsRouter.get("/", authenticate, getAllContactsController);
 contactsRouter.get("/:contactId", authenticate, isValidId, getContactController);
 contactsRouter.post("/", authenticate, validateBody(contactSchema), addContact);

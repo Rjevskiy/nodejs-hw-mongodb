@@ -11,40 +11,40 @@ const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || typeof authHeader !== "string" || !authHeader.startsWith("Bearer ")) {
-      console.log("⛔ Заголовок Authorization отсутствует или некорректен");
+      console.log("Заголовок Authorization отсутствует или некорректен");
       throw createHttpError(401, "Missing or invalid authorization header");
     }
 
-    // Берем только сам токен, без "Bearer"
+    
     const token = authHeader.replace("Bearer ", "").trim();
-    console.log("🟢 Extracted Token:", token);
+    console.log("Extracted Token:", token);
 
     if (!ACCESS_TOKEN_SECRET) {
-      console.log("⛔ ACCESS_TOKEN_SECRET не загружен!");
+      console.log("ACCESS_TOKEN_SECRET не загружен!");
       throw createHttpError(500, "Server misconfiguration: missing token secret");
     }
 
-    console.log("🔍 Проверка токена...");
+    console.log("Проверка токена...");
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
-    console.log("🔍 Token Decoded:", decoded);
+    console.log("Token Decoded:", decoded);
 
     if (!decoded.id) {
-      console.log("⛔ ID в токене отсутствует!");
+      console.log("ID в токене отсутствует!");
       throw createHttpError(401, "Invalid access token");
     }
 
     const user = await User.findById(decoded.id);
     if (!user) {
-      console.log("⛔ Пользователь не найден в БД!");
+      console.log("Пользователь не найден в БД!");
       throw createHttpError(401, "Invalid access token");
     }
 
-    console.log("✅ Пользователь авторизован:", user.email);
+    console.log("Пользователь авторизован:", user.email);
 
     req.user = user;
     next();
   } catch (error) {
-    console.log("🚨 Ошибка аутентификации:", error.message);
+    console.log("Ошибка аутентификации:", error.message);
 
     if (error.name === "TokenExpiredError") {
       next(createHttpError(401, "Access token expired"));

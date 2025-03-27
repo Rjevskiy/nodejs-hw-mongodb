@@ -10,10 +10,10 @@ import authRouter from "./routes/auth.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 
-// Загружаем переменные окружения
+
 dotenv.config({ path: ".env" });
 
-// Проверяем, загружены ли все переменные окружения
+
 const requiredEnvVars = ["MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT"];
 const requiredAuthVars = ["ACCESS_TOKEN_SECRET", "REFRESH_TOKEN_SECRET"];
 
@@ -30,16 +30,16 @@ console.log("Загруженные переменные окружения:", {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ? "Загружен" : "Нет",
 });
 
-// Создаем сервер
+
 const app = express();
 
-// Подключаем middleware
+
 app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 
-// Middleware для установки Content-Type
+
 app.use((req, res, next) => {
   res.setHeader("Content-Type", "application/json");
   next();
@@ -49,11 +49,11 @@ app.use((req, res, next) => {
 app.use("/contacts", contactsRouter);
 app.use("/auth", authRouter);
 
-// Обработчики ошибок
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Подключение к MongoDB
+//  MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose
