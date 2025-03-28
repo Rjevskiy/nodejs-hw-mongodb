@@ -36,7 +36,6 @@ const addContactFn = async (req, res) => {
   const { contactType } = req.body;
   const userId = req.user._id; 
 
-  
   const validContactTypes = ['work', 'home', 'personal'];
   if (contactType && !validContactTypes.includes(contactType)) {
     return res.status(400).json({
@@ -76,7 +75,6 @@ const patchContactFn = async (req, res) => {
 
   const { name, phoneNumber } = req.body;
 
-  
   if (!name || !phoneNumber) {
     return res.status(400).json({
       status: 400,
@@ -103,9 +101,9 @@ const patchContactFn = async (req, res) => {
 
 const getAllContactsFn = async (req, res) => {
   const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', contactType, isFavourite } = req.query;
-  const userId = req.user._id; 
+  const userId = req.user._id;
 
-  const filter = { userId }; 
+  const filter = { userId };
 
   if (contactType) {
     filter.contactType = contactType;
@@ -119,7 +117,8 @@ const getAllContactsFn = async (req, res) => {
   const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   try {
-    const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage)); 
+    // Получаем контакты с использованием фильтра и сортировки
+    const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
 
     const totalItems = await Contact.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
@@ -151,7 +150,7 @@ const getAllContactsFn = async (req, res) => {
 
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
-  const userId = req.user._id; 
+  const userId = req.user._id;
 
   try {
     const contact = await getContactById(contactId, userId); 
@@ -191,6 +190,7 @@ const deleteContactFn = async (req, res) => {
 
   res.status(204).send();
 };
+
 
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
