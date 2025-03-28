@@ -1,6 +1,8 @@
 import createHttpError from "http-errors";
 import { registerUser, loginUser, logoutUserService, verifyAndRefreshToken } from "../services/auth.js";
 
+const tokenBlacklist = new Set(); // 🔥 Массив для хранения заблокированных токенов
+
 export const registerUserController = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -50,7 +52,7 @@ export const loginUserController = async (req, res, next) => {
 
     res.status(200).json({
       status: 200,
-      message: "Successfully logged in an user!",
+      message: "Successfully logged in a user!",
       data: { accessToken },
     });
   } catch (error) {
@@ -60,17 +62,26 @@ export const loginUserController = async (req, res, next) => {
 
 export const logoutUserController = async (req, res, next) => {
   try {
-    await logoutUserService(req);
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Missing or invalid authorization header" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    // 🔥 Добавляем токен в черный список
+    tokenBlacklist.add(token);
+    console.log("🚫 Токен добавлен в черный список:", token);
 
     res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
     res.clearCookie("accessToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
 
-    res.status(204).send();
+    return res.status(204).send();
   } catch (error) {
     next(error);
   }
 };
-
 
 export const refreshTokenController = async (req, res, next) => {
   try {
@@ -97,3 +108,6 @@ export const refreshTokenController = async (req, res, next) => {
     next(error);
   }
 };
+
+// Экспортируем черный список
+export { tokenBlacklist };

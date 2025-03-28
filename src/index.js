@@ -1,6 +1,6 @@
-import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
@@ -10,9 +10,7 @@ import authRouter from "./routes/auth.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 
-
 dotenv.config({ path: ".env" });
-
 
 const requiredEnvVars = ["MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT"];
 const requiredAuthVars = ["ACCESS_TOKEN_SECRET", "REFRESH_TOKEN_SECRET"];
@@ -30,30 +28,21 @@ console.log("Загруженные переменные окружения:", {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ? "Загружен" : "Нет",
 });
 
-
 const app = express();
-
 
 app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 
-
-app.use((req, res, next) => {
-  res.setHeader("Content-Type", "application/json");
-  next();
-});
-
 // Роуты
-app.use("/contacts", contactsRouter);
-app.use("/auth", authRouter);
-
+app.use("/contacts", contactsRouter); // Защищенные роуты для работы с контактами
+app.use("/auth", authRouter); // Роуты для аутентификации
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-//  MongoDB
+// MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose

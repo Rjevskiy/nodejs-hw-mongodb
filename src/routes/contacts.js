@@ -1,23 +1,20 @@
 import express from "express";
-import  authenticate  from "../middlewares/authenticate.js"; // Исправленный импорт
-import { validateBody } from "../middlewares/validateBody.js";
-import isValidId from "../middlewares/isValidId.js";
+import authenticate from "../middlewares/authenticate.js"; // Импортируем middleware для аутентификации
 import {
   addContact,
-  patchContact,
   getAllContactsController,
   getContactController,
+  patchContact,
   deleteContactController,
 } from "../controllers/contacts.js";
-import { contactSchema, updateContactSchema } from "../schemas/contactSchema.js";
 
-const contactsRouter = express.Router();
+const router = express.Router();
 
+// Применяем middleware для защиты роутов
+router.post("/", authenticate, addContact); // Добавить контакт
+router.get("/", authenticate, getAllContactsController); // Получить все контакты
+router.get("/:contactId", authenticate, getContactController); // Получить контакт по ID
+router.patch("/:contactId", authenticate, patchContact); // Обновить контакт
+router.delete("/:contactId", authenticate, deleteContactController); // Удалить контакт
 
-contactsRouter.get("/", authenticate, getAllContactsController);
-contactsRouter.get("/:contactId", authenticate, isValidId, getContactController);
-contactsRouter.post("/", authenticate, validateBody(contactSchema), addContact);
-contactsRouter.patch("/:contactId", authenticate, isValidId, validateBody(updateContactSchema), patchContact);
-contactsRouter.delete("/:contactId", authenticate, isValidId, deleteContactController);
-
-export default contactsRouter;
+export default router;
