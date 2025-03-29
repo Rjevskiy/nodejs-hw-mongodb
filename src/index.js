@@ -35,9 +35,9 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 
-// Роуты
-app.use("/contacts", contactsRouter); // Защищенные роуты для работы с контактами
-app.use("/auth", authRouter); // Роуты для аутентификации
+
+app.use("/contacts", contactsRouter); 
+app.use("/auth", authRouter); 
 
 app.use(notFoundHandler);
 app.use(errorHandler);

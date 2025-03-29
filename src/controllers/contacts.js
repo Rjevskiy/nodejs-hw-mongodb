@@ -117,7 +117,7 @@ const getAllContactsFn = async (req, res) => {
   const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   try {
-    // Получаем контакты с использованием фильтра и сортировки
+    
     const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
 
     const totalItems = await Contact.countDocuments(filter);

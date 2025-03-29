@@ -1,7 +1,7 @@
 import createHttpError from "http-errors";
 import { registerUser, loginUser, logoutUserService, verifyAndRefreshToken } from "../services/auth.js";
 
-const tokenBlacklist = new Set(); // 🔥 Массив для хранения заблокированных токенов
+const tokenBlacklist = new Set(); 
 
 export const registerUserController = async (req, res, next) => {
   try {
@@ -62,18 +62,19 @@ export const loginUserController = async (req, res, next) => {
 
 export const logoutUserController = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const { accessToken, refreshToken } = req.cookies; 
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Missing or invalid authorization header" });
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token is missing" });
     }
 
-    const token = authHeader.split(" ")[1];
+    
+    if (accessToken) {
+      tokenBlacklist.add(accessToken);
+      console.log("AccessToken добавлен в черный список:", accessToken);
+    }
 
-    // 🔥 Добавляем токен в черный список
-    tokenBlacklist.add(token);
-    console.log("🚫 Токен добавлен в черный список:", token);
-
+    
     res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
     res.clearCookie("accessToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "None" });
 
@@ -82,6 +83,7 @@ export const logoutUserController = async (req, res, next) => {
     next(error);
   }
 };
+
 
 export const refreshTokenController = async (req, res, next) => {
   try {
@@ -109,5 +111,5 @@ export const refreshTokenController = async (req, res, next) => {
   }
 };
 
-// Экспортируем черный список
+
 export { tokenBlacklist };
