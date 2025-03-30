@@ -28,3 +28,10 @@ export const loginSchema = Joi.object({
     'any.required': 'Поле "password" є обов’язковим для заповнення',
   }),
 });
+
+export const resetEmailSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.email": "Invalid email format",
+    "any.required": "Email field is required",
+  }),
+});
