@@ -1,6 +1,6 @@
 import Contact from '../models/Contact.js';
 
-// Получение всех контактов 
+// Получение всех 
 export const getAllContacts = async (filter, sortOptions, skip, limit) => {
   return await Contact.find(filter)
     .skip(skip)
