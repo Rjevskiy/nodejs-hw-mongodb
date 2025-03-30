@@ -112,4 +112,36 @@ export const refreshTokenController = async (req, res, next) => {
 };
 
 
+const { JWT_SECRET, APP_DOMAIN } = process.env;
+
+export const sendResetEmailController = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw createHttpError(404, "User not found!");
+    }
+
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "5m" });
+    const resetLink = `${APP_DOMAIN}/reset-password?token=${token}`;
+
+    const mailOptions = {
+      to: email,
+      subject: "Reset Your Password",
+      html: `<p>Click <a href='${resetLink}'>here</a> to reset your password.</p>`
+    };
+
+    await sendEmail(mailOptions);
+    res.status(200).json({
+      status: 200,
+      message: "Reset password email has been successfully sent.",
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 export { tokenBlacklist };
