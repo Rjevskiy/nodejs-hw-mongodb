@@ -6,10 +6,6 @@ import User from "../models/User.js";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
-
-console.log("ACCESS_TOKEN_SECRET:", ACCESS_TOKEN_SECRET);
-console.log("REFRESH_TOKEN_SECRET:", REFRESH_TOKEN_SECRET);
-
 if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
   throw new Error("Access or Refresh Token Secret is missing!");
 }
@@ -48,6 +44,25 @@ export const loginUser = async (email, password) => {
   return { accessToken, refreshToken };
 };
 
+export const resetPasswordService = async (token, newPassword) => {
+  try {
+    const payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
+    const user = await User.findOne({ email: payload.email });
+
+    if (!user) {
+      throw createHttpError(404, "User not found!");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return user;
+  } catch (error) {
+    throw createHttpError(401, "Token is expired or invalid.");
+  }
+};
+
 export const logoutUserService = (req) => {
   return new Promise((resolve) => {
     req.res.clearCookie("accessToken");
@@ -56,15 +71,10 @@ export const logoutUserService = (req) => {
   });
 };
 
-
 export const verifyAndRefreshToken = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-
-    const newAccessToken = jwt.sign({ id: payload.id }, ACCESS_TOKEN_SECRET, {
-      expiresIn: "15m",
-    });
-
+    const newAccessToken = jwt.sign({ id: payload.id }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
     return newAccessToken;
   } catch (error) {
     throw createHttpError(403, "Invalid or expired refresh token");
