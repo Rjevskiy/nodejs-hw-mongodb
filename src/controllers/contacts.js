@@ -178,18 +178,27 @@ const getContactFn = async (req, res) => {
 
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
-  const userId = req.user._id; 
+  const userId = req.user._id;
 
-  const deletedContact = await deleteContact(contactId, userId); 
-  if (!deletedContact) {
-    return res.status(404).json({
-      status: 404,
-      message: 'Contact not found',
+  try {
+    const deletedContact = await deleteContact(contactId, userId);
+    if (!deletedContact) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Contact not found',
+      });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Server error occurred while deleting the contact.',
     });
   }
-
-  res.status(204).send();
 };
+
 
 
 export const addContact = ctrlWrapper(addContactFn);

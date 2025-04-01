@@ -4,10 +4,11 @@ import User from "../models/User.js";
 import { 
   registerUser, 
   loginUser, 
-  logoutUserService,  // Импортируем функцию logoutUserService
+  logoutUserService, 
   verifyAndRefreshToken 
 } from "../services/auth.js";
 import bcrypt from "bcrypt";
+import { sendResetEmail } from "../services/email.js";  // Импортируем sendResetEmail
 
 const tokenBlacklist = new Set();  // Единственное объявление
 const { JWT_SECRET, APP_DOMAIN } = process.env;
@@ -75,11 +76,12 @@ export const refreshTokenController = async (req, res, next) => {
 export const sendResetEmailController = async (req, res, next) => {
   try {
     const { email } = req.body;
+    // Проверяем наличие пользователя
     const user = await User.findOne({ email });
-    if (!user) throw createHttpError(404, "User not found!");
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "5m" });
-    const resetLink = `${APP_DOMAIN}/reset-password?token=${token}`;
-    await sendEmail({ to: email, subject: "Reset Password", html: `<a href='${resetLink}'>Reset Password</a>` });
+    if (!user) {
+      throw createHttpError(404, "User not found!");
+    }
+    await sendResetEmail(email);  // Вызываем функцию из сервиса email для отправки письма
     res.status(200).json({ status: 200, message: "Reset email sent!" });
   } catch (error) {
     next(error);
@@ -106,6 +108,9 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(401, "Token is expired or invalid.");
     }
 
+    // Логируем email, на который будет отправлен сброс пароля
+    console.log("Email to reset password:", payload.email);
+
     const user = await User.findOne({ email: payload.email });
     if (!user) {
       throw createHttpError(404, "User not found!");
@@ -118,7 +123,15 @@ export const resetPasswordController = async (req, res, next) => {
     // Добавляем токен в черный список, чтобы его нельзя было повторно использовать
     tokenBlacklist.add(token);
 
-    res.status(200).json({ status: 200, message: "Password reset successfully!" });
+    // ❗ Удаляем активные сессии пользователя (если они хранятся в базе)
+    user.refreshToken = null; // Например, если refreshToken хранится в БД
+    await user.save();
+
+    res.status(200).json({ 
+      status: 200, 
+      message: "Password has been successfully reset.", 
+      data: {} 
+    });
   } catch (error) {
     next(error);
   }
