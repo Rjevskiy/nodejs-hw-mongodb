@@ -4,7 +4,6 @@ import { createContact, updateContact, getAllContacts, getContactById, deleteCon
 import ctrlWrapper from '../utils/ctrlWrapper.js';
 import Contact from '../models/Contact.js';
 
-
 export const registerUserController = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -31,10 +30,9 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
-
 const addContactFn = async (req, res) => {
   const { contactType } = req.body;
-  const userId = req.user._id; 
+  const userId = req.user._id;
 
   const validContactTypes = ['work', 'home', 'personal'];
   if (contactType && !validContactTypes.includes(contactType)) {
@@ -45,7 +43,7 @@ const addContactFn = async (req, res) => {
   }
 
   try {
-    const newContact = await createContact({ ...req.body, userId }); 
+    const newContact = await createContact({ ...req.body, userId });
     res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
@@ -60,12 +58,11 @@ const addContactFn = async (req, res) => {
   }
 };
 
-
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
-  const userId = req.user._id; 
+  const userId = req.user._id;
 
-  const existingContact = await getContactById(contactId, userId); 
+  const existingContact = await getContactById(contactId, userId);
   if (!existingContact) {
     return res.status(404).json({
       status: 404,
@@ -83,7 +80,7 @@ const patchContactFn = async (req, res) => {
   }
 
   try {
-    const updatedContact = await updateContact(contactId, userId, req.body); 
+    const updatedContact = await updateContact(contactId, userId, req.body);
     res.status(200).json({
       status: 200,
       message: 'Successfully updated the contact!',
@@ -97,7 +94,6 @@ const patchContactFn = async (req, res) => {
     });
   }
 };
-
 
 const getAllContactsFn = async (req, res) => {
   const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', contactType, isFavourite } = req.query;
@@ -117,7 +113,6 @@ const getAllContactsFn = async (req, res) => {
   const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   try {
-    
     const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
 
     const totalItems = await Contact.countDocuments(filter);
@@ -147,13 +142,12 @@ const getAllContactsFn = async (req, res) => {
   }
 };
 
-
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user._id;
 
   try {
-    const contact = await getContactById(contactId, userId); 
+    const contact = await getContactById(contactId, userId);
     if (!contact) {
       return res.status(404).json({
         status: 404,
@@ -174,7 +168,6 @@ const getContactFn = async (req, res) => {
     });
   }
 };
-
 
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
@@ -198,8 +191,6 @@ const deleteContactFn = async (req, res) => {
     });
   }
 };
-
-
 
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);

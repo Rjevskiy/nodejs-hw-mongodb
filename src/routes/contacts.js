@@ -19,3 +19,5 @@ router.get("/:contactId", authenticate, getContactController);
 router.delete("/:contactId", authenticate, deleteContactController); 
 
 export default router;
+
+
