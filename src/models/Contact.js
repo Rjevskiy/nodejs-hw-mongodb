@@ -1,3 +1,5 @@
+// src/models/Contact.js
+
 import mongoose from 'mongoose';
 
 const contactSchema = new mongoose.Schema(
@@ -29,6 +31,10 @@ const contactSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', 
       required: true,
+    },
+    photo: {  // Новое поле для фотографии
+      type: String,
+      required: false,
     },
   },
   {
