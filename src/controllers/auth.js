@@ -8,9 +8,9 @@ import {
   verifyAndRefreshToken 
 } from "../services/auth.js";
 import bcrypt from "bcrypt";
-import { sendResetEmail } from "../services/email.js";  // Импортируем sendResetEmail
+import { sendResetEmail } from "../services/email.js";  
 
-const tokenBlacklist = new Set();  // Единственное объявление
+const tokenBlacklist = new Set();  
 const { JWT_SECRET, APP_DOMAIN } = process.env;
 
 export const registerUserController = async (req, res, next) => {
@@ -52,7 +52,7 @@ export const logoutUserController = async (req, res, next) => {
       return res.status(401).json({ message: "Refresh token is missing" });
     }
     if (accessToken) tokenBlacklist.add(accessToken);
-    await logoutUserService(req);  // Вызовем logoutUserService, который очистит куки
+    await logoutUserService(req);  
     res.status(204).send();
   } catch (error) {
     next(error);
@@ -81,7 +81,7 @@ export const sendResetEmailController = async (req, res, next) => {
     if (!user) {
       throw createHttpError(404, "User not found!");
     }
-    await sendResetEmail(email);  // Вызываем функцию из сервиса email для отправки письма
+    await sendResetEmail(email);  
     res.status(200).json({ status: 200, message: "Reset email sent!" });
   } catch (error) {
     next(error);
@@ -96,7 +96,7 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(400, "Missing required fields");
     }
 
-    // Проверяем, не был ли этот токен уже использован
+    // Проверка
     if (tokenBlacklist.has(token)) {
       throw createHttpError(401, "Token is expired or invalid.");
     }
@@ -108,7 +108,7 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(401, "Token is expired or invalid.");
     }
 
-    // Логируем email, на который будет отправлен сброс пароля
+    // Логируем email
     console.log("Email to reset password:", payload.email);
 
     const user = await User.findOne({ email: payload.email });
@@ -116,15 +116,14 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(404, "User not found!");
     }
 
-    // Хешируем новый пароль перед сохранением
     user.password = await bcrypt.hash(password, 10);
     await user.save();
 
-    // Добавляем токен в черный список, чтобы его нельзя было повторно использовать
+    
     tokenBlacklist.add(token);
 
-    // ❗ Удаляем активные сессии пользователя (если они хранятся в базе)
-    user.refreshToken = null; // Например, если refreshToken хранится в БД
+    
+    user.refreshToken = null; 
     await user.save();
 
     res.status(200).json({ 

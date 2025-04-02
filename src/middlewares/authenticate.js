@@ -30,7 +30,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
-    console.log("🔍 Декодований токен:", decoded);
+    console.log(" Декодований токен:", decoded);
 
     if (!decoded.id) {
       console.log("ID у токені відсутній!");
