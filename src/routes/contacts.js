@@ -1,6 +1,6 @@
 import express from "express";
 import authenticate from "../middlewares/authenticate.js"; 
-import { upload } from "../services/cloudinary.js"; // Импортируем настройку для загрузки файлов
+import { upload } from "../services/cloudinary.js"; 
 import {
   addContact,
   getAllContactsController,
@@ -11,9 +11,9 @@ import {
 
 const router = express.Router();
 
-// Обновляем роуты для обработки изображений
-router.post("/", authenticate, upload.single('photo'), addContact); // Добавляем middleware для загрузки фото
-router.patch("/:contactId", authenticate, upload.single('photo'), patchContact); // Добавляем middleware для загрузки фото
+//  обработка изображений
+router.post("/", authenticate, upload.single('photo'), addContact); 
+router.patch("/:contactId", authenticate, upload.single('photo'), patchContact); 
 router.get("/", authenticate, getAllContactsController); 
 router.get("/:contactId", authenticate, getContactController); 
 router.delete("/:contactId", authenticate, deleteContactController); 

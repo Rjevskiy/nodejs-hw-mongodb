@@ -2,19 +2,19 @@ import cloudinary from 'cloudinary';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
-// Конфигурация Cloudinary
+// Конфиг
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Конфигурация Multer для Cloudinary
+//  Multer Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'contacts', // Папка для сохранения файлов
-    allowed_formats: ['jpg', 'jpeg', 'png'], // Допустимые форматы файлов
+    folder: 'contacts', 
+    allowed_formats: ['jpg', 'jpeg', 'png'], 
   },
 });
 

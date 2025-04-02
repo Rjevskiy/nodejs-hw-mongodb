@@ -32,7 +32,7 @@ const contactSchema = new mongoose.Schema(
       ref: 'User', 
       required: true,
     },
-    photo: {  // Новое поле для фотографии
+    photo: {  
       type: String,
       required: false,
     },
