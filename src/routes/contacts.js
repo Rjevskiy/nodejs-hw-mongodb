@@ -13,10 +13,10 @@ const router = express.Router();
 
 //  обработка изображений
 router.post("/", authenticate, upload.single('photo'), addContact); 
-router.patch("/:contactId", authenticate, upload.single('photo'), patchContact); 
+router.patch("/:contact", authenticate, upload.single('photo'), patchContact); 
 router.get("/", authenticate, getAllContactsController); 
-router.get("/:contactId", authenticate, getContactController); 
-router.delete("/:contactId", authenticate, deleteContactController); 
+router.get("/:contact", authenticate, getContactController); 
+router.delete("/:contact", authenticate, deleteContactController); 
 
 export default router;
 
