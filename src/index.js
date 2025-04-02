@@ -12,7 +12,7 @@ import notFoundHandler from "./middlewares/notFoundHandler.js";
 
 dotenv.config({ path: ".env" });
 
-// Перевірка наявності змінних середовища
+// Перевірка 
 const requiredEnvVars = [
   "MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT",
   "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", 
