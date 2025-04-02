@@ -43,14 +43,20 @@ const addContactFn = async (req, res) => {
   }
 
   try {
-    const newContact = await createContact({ ...req.body, userId });
+    let photoUrl = null;
+    if (req.file) {
+      photoUrl = req.file.path; 
+    }
+
+    const newContact = await createContact({ ...req.body, userId, photo: photoUrl });
+
     res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
       data: newContact,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating contact:', error);
     res.status(500).json({
       status: 500,
       message: 'Server error occurred while creating the contact.',
@@ -80,14 +86,20 @@ const patchContactFn = async (req, res) => {
   }
 
   try {
-    const updatedContact = await updateContact(contactId, userId, req.body);
+    let photoUrl = existingContact.photo;
+    if (req.file) {
+      photoUrl = req.file.path; 
+    }
+
+    const updatedContact = await updateContact(contactId, userId, { ...req.body, photo: photoUrl });
+
     res.status(200).json({
       status: 200,
       message: 'Successfully updated the contact!',
       data: updatedContact,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating contact:', error);
     res.status(500).json({
       status: 500,
       message: 'Server error occurred while updating the contact.',
@@ -134,7 +146,7 @@ const getAllContactsFn = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching contacts:', error);
     res.status(500).json({
       status: 500,
       message: 'Server error occurred while retrieving contacts.',
@@ -161,7 +173,7 @@ const getContactFn = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching contact:', error);
     res.status(500).json({
       status: 500,
       message: 'Server error occurred while retrieving the contact.',
@@ -184,7 +196,7 @@ const deleteContactFn = async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting contact:', error);
     res.status(500).json({
       status: 500,
       message: 'Server error occurred while deleting the contact.',

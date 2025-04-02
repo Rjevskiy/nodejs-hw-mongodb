@@ -12,10 +12,14 @@ import notFoundHandler from "./middlewares/notFoundHandler.js";
 
 dotenv.config({ path: ".env" });
 
-const requiredEnvVars = ["MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT"];
-const requiredAuthVars = ["ACCESS_TOKEN_SECRET", "REFRESH_TOKEN_SECRET"];
+// Перевірка наявності змінних середовища
+const requiredEnvVars = [
+  "MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT",
+  "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", 
+  "SMTP_PASSWORD", "SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_FROM", "APP_DOMAIN", "JWT_SECRET"
+];
 
-[...requiredEnvVars, ...requiredAuthVars].forEach((envVar) => {
+requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
     console.error(`Ошибка: Переменная окружения ${envVar} отсутствует!`);
     process.exit(1);
@@ -35,10 +39,11 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 
+// Маршрути
+app.use("/contacts", contactsRouter);
+app.use("/auth", authRouter);
 
-app.use("/contacts", contactsRouter); 
-app.use("/auth", authRouter); 
-
+// Обробка помилок
 app.use(notFoundHandler);
 app.use(errorHandler);
 
