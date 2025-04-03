@@ -20,4 +20,3 @@ router.delete("/:contact", authenticate, deleteContactController);
 
 export default router;
 
-

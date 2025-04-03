@@ -16,7 +16,9 @@ const authenticate = async (req, res, next) => {
       throw createHttpError(401, "Відсутній або некоректний заголовок авторизації");
     }
 
+    // Извлекаем токен из заголовка
     const token = authHeader.split(" ")[1];
+
     console.log("Витягнутий токен:", token);
 
     if (tokenBlacklist.has(token)) {
@@ -30,7 +32,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
-    console.log(" Декодований токен:", decoded);
+    console.log("Декодований токен:", decoded);
 
     if (!decoded.id) {
       console.log("ID у токені відсутній!");

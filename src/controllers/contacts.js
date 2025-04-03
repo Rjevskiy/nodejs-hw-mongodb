@@ -1,22 +1,28 @@
-import createHttpError from 'http-errors';
-import { registerUser } from '../services/auth.js';
-import { createContact, updateContact, getAllContacts, getContactById, deleteContact } from '../services/contacts.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
-import Contact from '../models/Contact.js';
+import createHttpError from "http-errors";
+import { registerUser } from "../services/auth.js";
+import {
+  createContact,
+  updateContact,
+  getAllContacts,
+  getContactById,
+  deleteContact,
+} from "../services/contacts.js";
+import ctrlWrapper from "../utils/ctrlWrapper.js";
+import Contact from "../models/Contact.js";
 
 export const registerUserController = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      throw createHttpError(400, 'Missing required fields');
+      throw createHttpError(400, "Missing required fields");
     }
 
     const newUser = await registerUser({ name, email, password });
 
     res.status(201).json({
       status: 201,
-      message: 'Successfully registered a user!',
+      message: "Successfully registered a user!",
       data: {
         id: newUser._id,
         name: newUser.name,
@@ -31,85 +37,133 @@ export const registerUserController = async (req, res, next) => {
 };
 
 const addContactFn = async (req, res) => {
-  const { contactType } = req.body;
-  const userId = req.user._id;
+  console.log("📩 Incoming request body:", req.body);
+  console.log("📷 Uploaded file:", req.file);
 
-  const validContactTypes = ['work', 'home', 'personal'];
+  if (!Object.keys(req.body).length) {
+    return res.status(400).json({
+      status: 400,
+      message: "Request body is empty",
+    });
+  }
+
+  const { contactType } = req.body;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 401,
+      message: "Unauthorized",
+    });
+  }
+
+  const validContactTypes = ["work", "home", "personal"];
   if (contactType && !validContactTypes.includes(contactType)) {
     return res.status(400).json({
       status: 400,
-      message: `Invalid contactType. Valid values are: ${validContactTypes.join(', ')}`,
+      message: `Invalid contactType. Valid values are: ${validContactTypes.join(
+        ", "
+      )}`,
     });
   }
 
   try {
     let photoUrl = null;
     if (req.file) {
-      photoUrl = req.file.path; 
+      photoUrl = req.file.path;
     }
 
-    const newContact = await createContact({ ...req.body, userId, photo: photoUrl });
+    const newContact = await createContact({
+      ...req.body,
+      userId,
+      photo: photoUrl,
+    });
 
     res.status(201).json({
       status: 201,
-      message: 'Successfully created a contact!',
+      message: "Successfully created a contact!",
       data: newContact,
     });
   } catch (error) {
-    console.error('Error creating contact:', error);
+    console.error("❌ Error creating contact:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error occurred while creating the contact.',
+      message: "Server error occurred while creating the contact.",
     });
   }
 };
 
 const patchContactFn = async (req, res) => {
+  console.log("📩 Incoming request body:", req.body);
+  console.log("📷 Uploaded file:", req.file);
+
+  if (!Object.keys(req.body).length) {
+    return res.status(400).json({
+      status: 400,
+      message: "Request body is empty",
+    });
+  }
+
   const { contactId } = req.params;
-  const userId = req.user._id;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 401,
+      message: "Unauthorized",
+    });
+  }
 
   const existingContact = await getContactById(contactId, userId);
   if (!existingContact) {
     return res.status(404).json({
       status: 404,
-      message: 'Contact not found',
-    });
-  }
-
-  const { name, phoneNumber } = req.body;
-
-  if (!name || !phoneNumber) {
-    return res.status(400).json({
-      status: 400,
-      message: '"name" and "phoneNumber" are required',
+      message: "Contact not found",
     });
   }
 
   try {
     let photoUrl = existingContact.photo;
     if (req.file) {
-      photoUrl = req.file.path; 
+      photoUrl = req.file.path;
     }
 
-    const updatedContact = await updateContact(contactId, userId, { ...req.body, photo: photoUrl });
+    const updatedContact = await updateContact(contactId, userId, {
+      ...req.body,
+      photo: photoUrl,
+    });
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully updated the contact!',
+      message: "Successfully updated the contact!",
       data: updatedContact,
     });
   } catch (error) {
-    console.error('Error updating contact:', error);
+    console.error("❌ Error updating contact:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error occurred while updating the contact.',
+      message: "Server error occurred while updating the contact.",
     });
   }
 };
 
 const getAllContactsFn = async (req, res) => {
-  const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc', contactType, isFavourite } = req.query;
-  const userId = req.user._id;
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = "name",
+    sortOrder = "asc",
+    contactType,
+    isFavourite,
+  } = req.query;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 401,
+      message: "Unauthorized",
+    });
+  }
 
   const filter = { userId };
 
@@ -118,11 +172,11 @@ const getAllContactsFn = async (req, res) => {
   }
 
   if (isFavourite !== undefined) {
-    filter.isFavourite = isFavourite === 'true';
+    filter.isFavourite = isFavourite === "true";
   }
 
   const skip = (parseInt(page) - 1) * parseInt(perPage);
-  const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
+  const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
   try {
     const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
@@ -134,7 +188,7 @@ const getAllContactsFn = async (req, res) => {
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully found contacts!',
+      message: "Successfully found contacts!",
       data: {
         data: contacts,
         page: parseInt(page),
@@ -146,24 +200,31 @@ const getAllContactsFn = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error fetching contacts:', error);
+    console.error("❌ Error fetching contacts:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error occurred while retrieving contacts.',
+      message: "Server error occurred while retrieving contacts.",
     });
   }
 };
 
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
-  const userId = req.user._id;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 401,
+      message: "Unauthorized",
+    });
+  }
 
   try {
     const contact = await getContactById(contactId, userId);
     if (!contact) {
       return res.status(404).json({
         status: 404,
-        message: 'Contact not found',
+        message: "Contact not found",
       });
     }
 
@@ -173,33 +234,40 @@ const getContactFn = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error('Error fetching contact:', error);
+    console.error("❌ Error fetching contact:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error occurred while retrieving the contact.',
+      message: "Server error occurred while retrieving the contact.",
     });
   }
 };
 
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
-  const userId = req.user._id;
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({
+      status: 401,
+      message: "Unauthorized",
+    });
+  }
 
   try {
     const deletedContact = await deleteContact(contactId, userId);
     if (!deletedContact) {
       return res.status(404).json({
         status: 404,
-        message: 'Contact not found',
+        message: "Contact not found",
       });
     }
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting contact:', error);
+    console.error("❌ Error deleting contact:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error occurred while deleting the contact.',
+      message: "Server error occurred while deleting the contact.",
     });
   }
 };
