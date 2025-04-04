@@ -43,11 +43,11 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Роутери
+
 app.use("/auth", authRouter);  
 app.use("/auth/contacts", contactsRouter);  
 
-// Обробники помилок
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
