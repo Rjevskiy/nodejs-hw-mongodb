@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import Contact from '../models/Contact.js';
+import Contact from '../src/models/Contact.js';
 
 dotenv.config();
 
@@ -22,6 +22,14 @@ mongoose
       console.error('Ошибка чтения файла contacts.json:', err);
       process.exit(1);
     }
+
+    // Добавим временный userId для каждого контакта
+    const tempUserId = new mongoose.Types.ObjectId(); // Генерируем новый ObjectId
+
+    contactsData = contactsData.map(contact => ({
+      ...contact,
+      userId: tempUserId, // Добавляем этот userId ко всем контактам
+    }));
 
     await Contact.deleteMany();
     console.log('Коллекция очищена');

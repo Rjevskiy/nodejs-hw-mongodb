@@ -1,5 +1,5 @@
 import express from "express";
-import authenticate from "../middlewares/authenticate.js"; 
+import authenticate from "../middlewares/authenticate.js";
 import { upload } from "../services/cloudinary.js"; 
 import {
   addContact,
@@ -11,12 +11,11 @@ import {
 
 const router = express.Router();
 
-//  обработка изображений
-router.post("/", authenticate, upload.single('photo'), addContact); 
-router.patch("/:contact", authenticate, upload.single('photo'), patchContact); 
-router.get("/", authenticate, getAllContactsController); 
-router.get("/:contact", authenticate, getContactController); 
-router.delete("/:contact", authenticate, deleteContactController); 
+// Маршруты для работы с контактами без префикса /auth
+router.post("/", authenticate, upload.single('photo'), addContact);  // POST /auth/contacts
+router.patch("/:contactId", authenticate, upload.single('photo'), patchContact);  // PATCH /auth/contacts/:contactId
+router.get("/", authenticate, getAllContactsController);  // GET /auth/contacts
+router.get("/:contactId", authenticate, getContactController);  // GET /auth/contacts/:contactId
+router.delete("/:contactId", authenticate, deleteContactController);  // DELETE /auth/contacts/:contactId
 
 export default router;
-
