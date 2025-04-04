@@ -9,12 +9,12 @@ const contactSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       required: true,
-      match: [/^\+?[1-9]\d{1,14}$/, 'Please provide a valid phone number'], // Регулярное выражение для проверки телефона
+      match: [/^\+?[1-9]\d{1,14}$/, 'Please provide a valid phone number'], 
     },
     email: {
       type: String,
       required: false,
-      match: [/.+@.+\..+/, 'Please provide a valid email address'], // Простая проверка email
+      match: [/.+@.+\..+/, 'Please provide a valid email address'], 
     },
     isFavourite: {
       type: Boolean,
@@ -31,7 +31,7 @@ const contactSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
       validate: {
-        validator: mongoose.Types.ObjectId.isValid, // Проверка, что userId - это действительный ObjectId
+        validator: mongoose.Types.ObjectId.isValid, 
         message: 'Invalid User ID',
       },
     },
@@ -44,7 +44,7 @@ const contactSchema = new mongoose.Schema(
     timestamps: true,
     toJSON: {
       transform: (doc, ret) => {
-        delete ret.__v;  // Удаление __v из результата
+        delete ret.__v;  
         return ret;
       },
     },

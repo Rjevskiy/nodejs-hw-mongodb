@@ -13,7 +13,6 @@ import notFoundHandler from "./middlewares/notFoundHandler.js";
 
 dotenv.config({ path: ".env" });
 
-// Проверка наличия переменных окружения
 const requiredEnvVars = [
   "MONGODB_USER", "MONGODB_PASSWORD", "MONGODB_URL", "MONGODB_DB", "PORT",
   "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", 
@@ -22,51 +21,48 @@ const requiredEnvVars = [
 
 requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
-    console.error(`❌ Ошибка: Переменная окружения ${envVar} отсутствует!`);
+    console.error(`Помилка: Змінна середовища ${envVar} відсутня!`);
     process.exit(1);
   }
 });
 
-console.log("✅ Загруженные переменные окружения:", {
+console.log(" Завантажені змінні середовища:", {
   PORT: process.env.PORT,
   MONGODB_URL: process.env.MONGODB_URL,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ? "Загружен" : "Нет",
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ? "Завантажено" : "Немає",
 });
 
-// Инициализация Express
 const app = express();
 
-// 🔒 Безопасность
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
-// 🛠️ Поддержка JSON и multipart/form-data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔀 Маршруты
-app.use("/auth", authRouter);  // Маршруты авторизации
-app.use("/auth/contacts", contactsRouter);  // Маршруты для работы с контактами теперь начинаются с /auth
+// Роутери
+app.use("/auth", authRouter);  
+app.use("/auth/contacts", contactsRouter);  
 
-// ⚠️ Обработчики ошибок
+// Обробники помилок
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Подключение к MongoDB
+// Підключення до MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose
   .connect(mongoURI)
   .then(() => {
-    console.log("✅ MongoDB подключена!");
+    console.log(" Підключено до MongoDB!");
     app.listen(process.env.PORT, () => {
-      console.log(`🚀 Сервер запущен на http://localhost:${process.env.PORT}`);
+      console.log(` Сервер запущено на http://localhost:${process.env.PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ Ошибка подключения к MongoDB:", err.message);
+    console.error(" Помилка підключення до MongoDB:", err.message);
     process.exit(1);
   });

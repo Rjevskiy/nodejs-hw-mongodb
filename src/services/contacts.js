@@ -2,9 +2,9 @@
 import Contact from '../models/Contact.js';
 
 
-// Получение всех контактов с фильтрацией, сортировкой и пагинацией
+
 export const getAllContacts = async (filter = {}, sortOptions = {}, skip = 0, limit = 10) => {
-  // Добавляем фильтр по userId, если он не был передан
+
   if (!filter.userId) {
     throw new Error('userId is required');
   }

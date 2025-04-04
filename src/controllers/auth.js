@@ -68,7 +68,7 @@ export const refreshTokenController = async (req, res, next) => {
       throw createHttpError(401, "Refresh token is missing");
     }
 
-    // Проверяем, не в черном ли списке токен
+    
     if (tokenBlacklist.has(refreshToken)) {
       throw createHttpError(401, "Invalid refresh token");
     }

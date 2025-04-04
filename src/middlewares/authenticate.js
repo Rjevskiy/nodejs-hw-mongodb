@@ -16,7 +16,7 @@ const authenticate = async (req, res, next) => {
       throw createHttpError(401, "Відсутній або некоректний заголовок авторизації");
     }
 
-    // Извлекаем токен из заголовка
+  
     const token = authHeader.split(" ")[1];
 
     console.log("Витягнутий токен:", token);

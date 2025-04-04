@@ -1,4 +1,3 @@
-// src/controllers/contacts.js
 import createHttpError from "http-errors";
 import { registerUser } from "../services/auth.js";
 import {
@@ -38,7 +37,7 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
-// Створення контакту
+// Створення 
 const addContactFn = async (req, res) => {
   const { contactType, name, phone } = req.body;
   const userId = req.user?._id;
@@ -77,7 +76,7 @@ const addContactFn = async (req, res) => {
       data: newContact,
     });
   } catch (error) {
-    console.error("❌ Помилка при створенні контакту:", error.message);
+    console.error(" Помилка при створенні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час створення контакту.",
@@ -85,7 +84,7 @@ const addContactFn = async (req, res) => {
   }
 };
 
-// Оновлення контакту
+// Оновлення 
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -123,7 +122,7 @@ const patchContactFn = async (req, res) => {
       data: updatedContact,
     });
   } catch (error) {
-    console.error("❌ Помилка при оновленні контакту:", error.message);
+    console.error(" Помилка при оновленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час оновлення контакту.",
@@ -131,7 +130,7 @@ const patchContactFn = async (req, res) => {
   }
 };
 
-// Отримання всіх контактів
+// Отримання усіх контактів
 const getAllContactsFn = async (req, res) => {
   const {
     page = 1,
@@ -174,7 +173,7 @@ const getAllContactsFn = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Помилка при отриманні контактів:", error.message);
+    console.error(" Помилка при отриманні контактів:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контактів.",
@@ -182,7 +181,7 @@ const getAllContactsFn = async (req, res) => {
   }
 };
 
-// Отримання одного контакту
+// Отримання контакту
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -206,7 +205,7 @@ const getContactFn = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error("❌ Помилка при отриманні контакту:", error.message);
+    console.error(" Помилка при отриманні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контакту.",
@@ -234,7 +233,7 @@ const deleteContactFn = async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error("❌ Помилка при видаленні контакту:", error.message);
+    console.error(" Помилка при видаленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час видалення контакту.",
@@ -242,7 +241,7 @@ const deleteContactFn = async (req, res) => {
   }
 };
 
-// Експорт контролерів з обгорткою
+
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);

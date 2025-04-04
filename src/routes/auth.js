@@ -1,5 +1,5 @@
 import express from "express";
-import { validateBody } from "../middlewares/validateBody.js"; // если есть
+import { validateBody } from "../middlewares/validateBody.js"; 
 import {
   registerUserController,
   loginUserController,
@@ -8,7 +8,7 @@ import {
   sendResetEmailController,
   resetPasswordController
 } from "../controllers/auth.js";
-import { registerSchema, loginSchema, resetPasswordSchema } from "../schemas/authSchema.js"; // схемы валидации
+import { registerSchema, loginSchema, resetPasswordSchema } from "../schemas/authSchema.js"; 
 import authenticate from "../middlewares/authenticate.js";
 
 const router = express.Router();
