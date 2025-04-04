@@ -1,5 +1,3 @@
-// src/models/Contact.js
-
 import mongoose from 'mongoose';
 
 const contactSchema = new mongoose.Schema(
@@ -11,6 +9,7 @@ const contactSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
       required: true,
+      match: [/^\+?[1-9]\d{1,14}$/, 'Please provide a valid phone number'], 
     },
     email: {
       type: String,
@@ -29,8 +28,12 @@ const contactSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', 
+      ref: 'User',
       required: true,
+      validate: {
+        validator: mongoose.Types.ObjectId.isValid, 
+        message: 'Invalid User ID',
+      },
     },
     photo: {  
       type: String,
@@ -41,7 +44,7 @@ const contactSchema = new mongoose.Schema(
     timestamps: true,
     toJSON: {
       transform: (doc, ret) => {
-        delete ret.__v;
+        delete ret.__v;  
         return ret;
       },
     },

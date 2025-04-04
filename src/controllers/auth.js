@@ -53,6 +53,8 @@ export const logoutUserController = async (req, res, next) => {
     }
     if (accessToken) tokenBlacklist.add(accessToken);
     await logoutUserService(req);  
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.status(204).send();
   } catch (error) {
     next(error);
@@ -65,6 +67,12 @@ export const refreshTokenController = async (req, res, next) => {
     if (!refreshToken) {
       throw createHttpError(401, "Refresh token is missing");
     }
+
+    
+    if (tokenBlacklist.has(refreshToken)) {
+      throw createHttpError(401, "Invalid refresh token");
+    }
+
     const newAccessToken = await verifyAndRefreshToken(refreshToken);
     res.cookie("accessToken", newAccessToken, { httpOnly: true, secure: true, sameSite: "None" });
     res.status(200).json({ status: 200, message: "Token refreshed!", data: { accessToken: newAccessToken } });
@@ -76,7 +84,6 @@ export const refreshTokenController = async (req, res, next) => {
 export const sendResetEmailController = async (req, res, next) => {
   try {
     const { email } = req.body;
-    // Проверяем наличие пользователя
     const user = await User.findOne({ email });
     if (!user) {
       throw createHttpError(404, "User not found!");
@@ -96,7 +103,6 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(400, "Missing required fields");
     }
 
-    // Проверка
     if (tokenBlacklist.has(token)) {
       throw createHttpError(401, "Token is expired or invalid.");
     }
@@ -108,7 +114,6 @@ export const resetPasswordController = async (req, res, next) => {
       throw createHttpError(401, "Token is expired or invalid.");
     }
 
-    // Логируем email
     console.log("Email to reset password:", payload.email);
 
     const user = await User.findOne({ email: payload.email });
@@ -117,14 +122,10 @@ export const resetPasswordController = async (req, res, next) => {
     }
 
     user.password = await bcrypt.hash(password, 10);
-    await user.save();
-
-    
-    tokenBlacklist.add(token);
-
-    
     user.refreshToken = null; 
     await user.save();
+
+    tokenBlacklist.add(token);
 
     res.status(200).json({ 
       status: 200, 
