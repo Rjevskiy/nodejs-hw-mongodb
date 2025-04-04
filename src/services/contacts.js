@@ -18,9 +18,13 @@ export const getAllContacts = async (filter = {}, sortOptions = {}, skip = 0, li
 
 // Получение контакта по ID
 export const getContactById = async (contactId, userId) => {
-  return await Contact.findOne({ _id: contactId, userId });
+  try {
+    const contact = await Contact.findOne({ _id: contactId, userId });
+    return contact;
+  } catch (error) {
+    throw new Error("Error fetching contact by ID");
+  }
 };
-
 
 // Создание контакта
 export const createContact = async ({ name, phoneNumber, email, isFavourite, contactType, userId, photo }) => {

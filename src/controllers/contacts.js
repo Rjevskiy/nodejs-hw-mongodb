@@ -1,3 +1,4 @@
+// src/controllers/contacts.js
 import createHttpError from "http-errors";
 import { registerUser } from "../services/auth.js";
 import {
@@ -10,19 +11,20 @@ import {
 import ctrlWrapper from "../utils/ctrlWrapper.js";
 import Contact from "../models/Contact.js";
 
+// Реєстрація користувача
 export const registerUserController = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      throw createHttpError(400, "Missing required fields");
+      throw createHttpError(400, "Відсутні обов’язкові поля");
     }
 
     const newUser = await registerUser({ name, email, password });
 
     res.status(201).json({
       status: 201,
-      message: "Successfully registered a user!",
+      message: "Користувача успішно зареєстровано!",
       data: {
         id: newUser._id,
         name: newUser.name,
@@ -36,24 +38,19 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
+// Створення контакту
 const addContactFn = async (req, res) => {
-  console.log("📩 Incoming request body:", req.body);
-  console.log("📷 Uploaded file:", req.file);
-
-  if (!Object.keys(req.body).length) {
-    return res.status(400).json({
-      status: 400,
-      message: "Request body is empty",
-    });
-  }
-
-  const { contactType } = req.body;
+  const { contactType, name, phone } = req.body;
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(401).json({
-      status: 401,
-      message: "Unauthorized",
+    return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
+  }
+
+  if (!name || !phone) {
+    return res.status(400).json({
+      status: 400,
+      message: "Ім’я та номер телефону обов’язкові",
     });
   }
 
@@ -61,17 +58,12 @@ const addContactFn = async (req, res) => {
   if (contactType && !validContactTypes.includes(contactType)) {
     return res.status(400).json({
       status: 400,
-      message: `Invalid contactType. Valid values are: ${validContactTypes.join(
-        ", "
-      )}`,
+      message: `Невірний тип контакту. Можливі значення: ${validContactTypes.join(", ")}`,
     });
   }
 
   try {
-    let photoUrl = null;
-    if (req.file) {
-      photoUrl = req.file.path;
-    }
+    const photoUrl = req.file?.path || null;
 
     const newContact = await createContact({
       ...req.body,
@@ -81,52 +73,44 @@ const addContactFn = async (req, res) => {
 
     res.status(201).json({
       status: 201,
-      message: "Successfully created a contact!",
+      message: "Контакт успішно створено!",
       data: newContact,
     });
   } catch (error) {
-    console.error("❌ Error creating contact:", error);
+    console.error("❌ Помилка при створенні контакту:", error.message);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while creating the contact.",
+      message: "Помилка сервера під час створення контакту.",
     });
   }
 };
 
+// Оновлення контакту
 const patchContactFn = async (req, res) => {
-  console.log("📩 Incoming request body:", req.body);
-  console.log("📷 Uploaded file:", req.file);
-
-  if (!Object.keys(req.body).length) {
-    return res.status(400).json({
-      status: 400,
-      message: "Request body is empty",
-    });
-  }
-
   const { contactId } = req.params;
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(401).json({
-      status: 401,
-      message: "Unauthorized",
-    });
+    return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
-  const existingContact = await getContactById(contactId, userId);
-  if (!existingContact) {
-    return res.status(404).json({
-      status: 404,
-      message: "Contact not found",
+  if (!Object.keys(req.body).length && !req.file) {
+    return res.status(400).json({
+      status: 400,
+      message: "Передайте хоча б одне поле для оновлення",
     });
   }
 
   try {
-    let photoUrl = existingContact.photo;
-    if (req.file) {
-      photoUrl = req.file.path;
+    const existingContact = await getContactById(contactId, userId);
+    if (!existingContact) {
+      return res.status(404).json({
+        status: 404,
+        message: "Контакт не знайдено",
+      });
     }
+
+    const photoUrl = req.file?.path || existingContact.photo;
 
     const updatedContact = await updateContact(contactId, userId, {
       ...req.body,
@@ -135,18 +119,19 @@ const patchContactFn = async (req, res) => {
 
     res.status(200).json({
       status: 200,
-      message: "Successfully updated the contact!",
+      message: "Контакт успішно оновлено",
       data: updatedContact,
     });
   } catch (error) {
-    console.error("❌ Error updating contact:", error);
+    console.error("❌ Помилка при оновленні контакту:", error.message);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while updating the contact.",
+      message: "Помилка сервера під час оновлення контакту.",
     });
   }
 };
 
+// Отримання всіх контактів
 const getAllContactsFn = async (req, res) => {
   const {
     page = 1,
@@ -156,67 +141,54 @@ const getAllContactsFn = async (req, res) => {
     contactType,
     isFavourite,
   } = req.query;
+
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(401).json({
-      status: 401,
-      message: "Unauthorized",
-    });
+    return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
   const filter = { userId };
-
-  if (contactType) {
-    filter.contactType = contactType;
-  }
-
-  if (isFavourite !== undefined) {
-    filter.isFavourite = isFavourite === "true";
-  }
+  if (contactType) filter.contactType = contactType;
+  if (isFavourite !== undefined) filter.isFavourite = isFavourite === "true";
 
   const skip = (parseInt(page) - 1) * parseInt(perPage);
   const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
   try {
     const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
-
     const totalItems = await Contact.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
-    const hasPreviousPage = page > 1;
-    const hasNextPage = page < totalPages;
 
     res.status(200).json({
       status: 200,
-      message: "Successfully found contacts!",
+      message: "Контакти успішно отримано",
       data: {
         data: contacts,
         page: parseInt(page),
         perPage: parseInt(perPage),
         totalItems,
         totalPages,
-        hasPreviousPage,
-        hasNextPage,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages,
       },
     });
   } catch (error) {
-    console.error("❌ Error fetching contacts:", error);
+    console.error("❌ Помилка при отриманні контактів:", error.message);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while retrieving contacts.",
+      message: "Помилка сервера під час отримання контактів.",
     });
   }
 };
 
+// Отримання одного контакту
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(401).json({
-      status: 401,
-      message: "Unauthorized",
-    });
+    return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
   try {
@@ -224,33 +196,31 @@ const getContactFn = async (req, res) => {
     if (!contact) {
       return res.status(404).json({
         status: 404,
-        message: "Contact not found",
+        message: "Контакт не знайдено",
       });
     }
 
     res.status(200).json({
       status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
+      message: "Контакт успішно знайдено",
       data: contact,
     });
   } catch (error) {
-    console.error("❌ Error fetching contact:", error);
+    console.error("❌ Помилка при отриманні контакту:", error.message);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while retrieving the contact.",
+      message: "Помилка сервера під час отримання контакту.",
     });
   }
 };
 
+// Видалення контакту
 const deleteContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
 
   if (!userId) {
-    return res.status(401).json({
-      status: 401,
-      message: "Unauthorized",
-    });
+    return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
   try {
@@ -258,20 +228,21 @@ const deleteContactFn = async (req, res) => {
     if (!deletedContact) {
       return res.status(404).json({
         status: 404,
-        message: "Contact not found",
+        message: "Контакт не знайдено",
       });
     }
 
     res.status(204).send();
   } catch (error) {
-    console.error("❌ Error deleting contact:", error);
+    console.error("❌ Помилка при видаленні контакту:", error.message);
     res.status(500).json({
       status: 500,
-      message: "Server error occurred while deleting the contact.",
+      message: "Помилка сервера під час видалення контакту.",
     });
   }
 };
 
+// Експорт контролерів з обгорткою
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
