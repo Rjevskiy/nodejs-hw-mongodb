@@ -37,7 +37,7 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
-// Створення 
+// Створення контакту
 const addContactFn = async (req, res) => {
   const { contactType, name, phone } = req.body;
   const userId = req.user?._id;
@@ -76,7 +76,7 @@ const addContactFn = async (req, res) => {
       data: newContact,
     });
   } catch (error) {
-    console.error(" Помилка при створенні контакту:", error.message);
+    console.error("Помилка при створенні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час створення контакту.",
@@ -84,7 +84,7 @@ const addContactFn = async (req, res) => {
   }
 };
 
-// Оновлення 
+// Оновлення контакту
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -122,7 +122,7 @@ const patchContactFn = async (req, res) => {
       data: updatedContact,
     });
   } catch (error) {
-    console.error(" Помилка при оновленні контакту:", error.message);
+    console.error("Помилка при оновленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час оновлення контакту.",
@@ -173,7 +173,7 @@ const getAllContactsFn = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(" Помилка при отриманні контактів:", error.message);
+    console.error("Помилка при отриманні контактів:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контактів.",
@@ -205,7 +205,7 @@ const getContactFn = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error(" Помилка при отриманні контакту:", error.message);
+    console.error("Помилка при отриманні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контакту.",
@@ -233,14 +233,13 @@ const deleteContactFn = async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error(" Помилка при видаленні контакту:", error.message);
+    console.error("Помилка при видаленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час видалення контакту.",
     });
   }
 };
-
 
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
