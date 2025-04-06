@@ -35,7 +35,7 @@ export const createContact = async ({ name, phoneNumber, email, isFavourite, con
     isFavourite: isFavourite ?? false,
     contactType,
     userId,
-    photo, // Сохраняем URL фото
+    photo, 
   });
 
   return newContact.save();
