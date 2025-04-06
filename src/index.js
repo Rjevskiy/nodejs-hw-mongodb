@@ -44,8 +44,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+
+
 app.use("/auth", authRouter);  
 app.use("/auth/contacts", contactsRouter);  
+
 
 
 app.use(notFoundHandler);

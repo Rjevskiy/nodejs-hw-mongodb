@@ -14,7 +14,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'contacts', 
+    folder: 'contacts',
     allowed_formats: ['jpg', 'jpeg', 'png'],
     public_id: (req, file) => `${Date.now()}-${file.originalname}`,
   },

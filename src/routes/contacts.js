@@ -1,3 +1,4 @@
+// routers/contacts.js
 import express from "express";
 import authenticate from "../middlewares/authenticate.js";
 import { upload } from "../services/cloudinary.js"; 
@@ -12,10 +13,14 @@ import {
 const router = express.Router();
 
 
-router.post("/", authenticate, upload.single('photo'), addContact);  
-router.patch("/:contactId", authenticate, upload.single('photo'), patchContact);  
-router.get("/", authenticate, getAllContactsController);  
-router.get("/:contactId", authenticate, getContactController); 
-router.delete("/:contactId", authenticate, deleteContactController);  
+// Создание контакта (загрузка фото)
+router.post("/", authenticate, upload.single("photo"), addContact); 
+
+
+// Оставшиеся маршруты
+router.patch("/:contactId", authenticate, upload.single("photo"), patchContact);
+router.get("/", authenticate, getAllContactsController);
+router.get("/:contactId", authenticate, getContactController);
+router.delete("/:contactId", authenticate, deleteContactController);
 
 export default router;

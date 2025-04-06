@@ -37,7 +37,7 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
-// Створення 
+// Створення контакту
 const addContactFn = async (req, res) => {
   const { contactType, name, phone } = req.body;
   const userId = req.user?._id;
@@ -46,6 +46,9 @@ const addContactFn = async (req, res) => {
     return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
+  console.log('req.body:', req.body);
+  console.log('req.file:', req.file);
+  
   if (!name || !phone) {
     return res.status(400).json({
       status: 400,
@@ -59,6 +62,11 @@ const addContactFn = async (req, res) => {
       status: 400,
       message: `Невірний тип контакту. Можливі значення: ${validContactTypes.join(", ")}`,
     });
+  }
+
+  // проверка
+  if (!req.file) {
+    return res.status(400).json({ message: 'Аватар є обов’язковим' });
   }
 
   try {
@@ -76,7 +84,7 @@ const addContactFn = async (req, res) => {
       data: newContact,
     });
   } catch (error) {
-    console.error(" Помилка при створенні контакту:", error.message);
+    console.error("Помилка при створенні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час створення контакту.",
@@ -84,7 +92,8 @@ const addContactFn = async (req, res) => {
   }
 };
 
-// Оновлення 
+
+// Оновлення контакту
 const patchContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -111,10 +120,15 @@ const patchContactFn = async (req, res) => {
 
     const photoUrl = req.file?.path || existingContact.photo;
 
-    const updatedContact = await updateContact(contactId, userId, {
-      ...req.body,
-      photo: photoUrl,
-    });
+   
+    const allowedFields = ['name', 'phone', 'contactType', 'isFavourite'];
+    const updateData = allowedFields.reduce((acc, field) => {
+      if (req.body[field] !== undefined) acc[field] = req.body[field];
+      return acc;
+    }, {});
+    updateData.photo = photoUrl;
+
+    const updatedContact = await updateContact(contactId, userId, updateData);
 
     res.status(200).json({
       status: 200,
@@ -122,7 +136,7 @@ const patchContactFn = async (req, res) => {
       data: updatedContact,
     });
   } catch (error) {
-    console.error(" Помилка при оновленні контакту:", error.message);
+    console.error("Помилка при оновленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час оновлення контакту.",
@@ -149,15 +163,17 @@ const getAllContactsFn = async (req, res) => {
 
   const filter = { userId };
   if (contactType) filter.contactType = contactType;
-  if (isFavourite !== undefined) filter.isFavourite = isFavourite === "true";
+  if (isFavourite === "true") filter.isFavourite = true;
+  if (isFavourite === "false") filter.isFavourite = false;
 
-  const skip = (parseInt(page) - 1) * parseInt(perPage);
+  const limit = parseInt(perPage);
+  const skip = (parseInt(page) - 1) * limit;
   const sortOptions = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
   try {
-    const contacts = await getAllContacts(filter, sortOptions, skip, parseInt(perPage));
+    const contacts = await getAllContacts(filter, sortOptions, skip, limit);
     const totalItems = await Contact.countDocuments(filter);
-    const totalPages = Math.ceil(totalItems / perPage);
+    const totalPages = Math.ceil(totalItems / limit);
 
     res.status(200).json({
       status: 200,
@@ -165,15 +181,15 @@ const getAllContactsFn = async (req, res) => {
       data: {
         data: contacts,
         page: parseInt(page),
-        perPage: parseInt(perPage),
+        perPage: limit,
         totalItems,
         totalPages,
-        hasPreviousPage: page > 1,
-        hasNextPage: page < totalPages,
+        hasPreviousPage: parseInt(page) > 1,
+        hasNextPage: parseInt(page) < totalPages,
       },
     });
   } catch (error) {
-    console.error(" Помилка при отриманні контактів:", error.message);
+    console.error("Помилка при отриманні контактів:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контактів.",
@@ -181,7 +197,7 @@ const getAllContactsFn = async (req, res) => {
   }
 };
 
-// Отримання контакту
+// Отримання одного контакту
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -205,7 +221,7 @@ const getContactFn = async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error(" Помилка при отриманні контакту:", error.message);
+    console.error("Помилка при отриманні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час отримання контакту.",
@@ -231,9 +247,12 @@ const deleteContactFn = async (req, res) => {
       });
     }
 
-    res.status(204).send();
+    res.status(200).json({
+      status: 200,
+      message: "Контакт успішно видалено",
+    });
   } catch (error) {
-    console.error(" Помилка при видаленні контакту:", error.message);
+    console.error("Помилка при видаленні контакту:", error.message);
     res.status(500).json({
       status: 500,
       message: "Помилка сервера під час видалення контакту.",
@@ -241,7 +260,7 @@ const deleteContactFn = async (req, res) => {
   }
 };
 
-
+// Обгортки контролерів
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
