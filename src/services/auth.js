@@ -38,7 +38,7 @@ export const loginUser = async (email, password) => {
     throw createHttpError(401, "Invalid email or password");
   }
 
-  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+  const accessToken = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, { expiresIn: "150m" });
   const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: "30d" });
 
   return { accessToken, refreshToken };
@@ -74,7 +74,7 @@ export const logoutUserService = (req) => {
 export const verifyAndRefreshToken = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-    const newAccessToken = jwt.sign({ id: payload.id }, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+    const newAccessToken = jwt.sign({ id: payload.id }, ACCESS_TOKEN_SECRET, { expiresIn: "150m" });
     return newAccessToken;
   } catch (error) {
     throw createHttpError(403, "Invalid or expired refresh token");

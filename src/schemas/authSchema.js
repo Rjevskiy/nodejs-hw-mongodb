@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-//  реєстрація
+// Реєстрація
 export const registerSchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     'string.min': "Ім'я повинно містити не менше 3 символів",
@@ -17,7 +17,7 @@ export const registerSchema = Joi.object({
   }),
 });
 
-//  вхід
+// Вхід
 export const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     'string.email': 'Некоректний формат email',
@@ -29,14 +29,25 @@ export const loginSchema = Joi.object({
   }),
 });
 
+// Скидання паролю через email
 export const resetEmailSchema = Joi.object({
   email: Joi.string().email().required().messages({
-    "string.email": "Invalid email format",
-    "any.required": "Email field is required",
+    "string.email": "Некоректний формат email",
+    "any.required": "Поле email є обов’язковим для заповнення",
   }),
 });
 
+// Скидання паролю
 export const resetPasswordSchema = Joi.object({
-  token: Joi.string().required(),
-  password: Joi.string().min(6).required(),
+  token: Joi.string().required().messages({
+    'any.required': 'Токен є обов’язковим для заповнення',
+  }),
+  newPassword: Joi.string().min(6).required().messages({
+    'string.min': 'Пароль повинен містити не менше 6 символів',
+    'any.required': 'Поле "newPassword" є обов’язковим для заповнення',
+  }),
+  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+    'any.required': 'Поле "confirmPassword" є обов’язковим для заповнення',
+    'string.valid': 'Паролі не збігаються',
+  }),
 });
