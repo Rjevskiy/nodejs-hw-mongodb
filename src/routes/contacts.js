@@ -11,10 +11,8 @@ import {
 
 const router = express.Router();
 
-
 // Создание контакта (загрузка фото)
-router.post("/", authenticate, upload.single("photo"), addContact); 
-
+router.post("/", authenticate, upload.single("photo"), addContact);
 
 // Оставшиеся маршруты
 router.patch("/:contactId", authenticate, upload.single("photo"), patchContact);

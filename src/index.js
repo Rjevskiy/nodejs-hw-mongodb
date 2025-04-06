@@ -7,7 +7,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 
 import contactsRouter from "./routes/contacts.js";
-import authRouter from "./routes/auth.js";
+import authRouter from "./routes/auth.js";  // Этот путь должен быть правильным
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 
@@ -26,7 +26,7 @@ requiredEnvVars.forEach((envVar) => {
   }
 });
 
-console.log(" Завантажені змінні середовища:", {
+console.log("Завантажені змінні середовища:", {
   PORT: process.env.PORT,
   MONGODB_URL: process.env.MONGODB_URL,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
@@ -39,33 +39,28 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(authRouter);  
 
-
-
-app.use("/auth", authRouter);  
-app.use("/auth/contacts", contactsRouter);  
-
-
+app.use("/contacts", contactsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Підключення до MongoDB
+// Подключение к MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose
   .connect(mongoURI)
   .then(() => {
-    console.log(" Підключено до MongoDB!");
+    console.log("Підключено до MongoDB!");
     app.listen(process.env.PORT, () => {
-      console.log(` Сервер запущено на http://localhost:${process.env.PORT}`);
+      console.log(`Сервер запущено на http://localhost:${process.env.PORT}`);
     });
   })
   .catch((err) => {
-    console.error(" Помилка підключення до MongoDB:", err.message);
+    console.error("Помилка підключення до MongoDB:", err.message);
     process.exit(1);
   });

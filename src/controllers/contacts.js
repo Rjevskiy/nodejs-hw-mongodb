@@ -37,6 +37,7 @@ export const registerUserController = async (req, res, next) => {
   }
 };
 
+
 // Створення контакту
 const addContactFn = async (req, res) => {
   const { contactType, name, phone } = req.body;
@@ -64,7 +65,7 @@ const addContactFn = async (req, res) => {
     });
   }
 
-  // проверка
+  
   if (!req.file) {
     return res.status(400).json({ message: 'Аватар є обов’язковим' });
   }
@@ -91,6 +92,7 @@ const addContactFn = async (req, res) => {
     });
   }
 };
+
 
 
 // Оновлення контакту
