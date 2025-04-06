@@ -197,7 +197,7 @@ const getAllContactsFn = async (req, res) => {
   }
 };
 
-// Отримання одного контакту
+// Отримання контакту
 const getContactFn = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user?._id;
@@ -260,7 +260,7 @@ const deleteContactFn = async (req, res) => {
   }
 };
 
-// Обгортки контролерів
+
 export const addContact = ctrlWrapper(addContactFn);
 export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
