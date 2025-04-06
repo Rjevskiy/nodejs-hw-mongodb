@@ -7,7 +7,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 
 import contactsRouter from "./routes/contacts.js";
-import authRouter from "./routes/auth.js";  // Этот путь должен быть правильным
+import authRouter from "./routes/auth.js";  
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 

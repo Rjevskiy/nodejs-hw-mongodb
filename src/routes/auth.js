@@ -18,7 +18,7 @@ router.post("/login", validateBody(loginSchema), loginUserController);
 router.post("/logout", authenticate, logoutUserController);
 router.post("/refresh", refreshTokenController);
 router.post("/send-reset-email", sendResetEmailController);
-// Обработчик для /reset-pwd
+
 router.post("/reset-pwd", validateBody(resetPasswordSchema), resetPasswordController);
 
 export default router;
