@@ -1,4 +1,3 @@
-// routers/contacts.js
 import express from "express";
 import authenticate from "../middlewares/authenticate.js";
 import { upload } from "../services/cloudinary.js"; 
