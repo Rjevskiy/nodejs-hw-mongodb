@@ -7,9 +7,13 @@ import morgan from "morgan";
 import helmet from "helmet";
 
 import contactsRouter from "./routes/contacts.js";
-import authRouter from "./routes/auth.js";  
+import authRouter from "./routes/auth.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
+
+import { resetPasswordController } from "./controllers/auth.js";
+import { validateBody } from "./middlewares/validateBody.js";
+import { resetPasswordSchema } from "./schemas/authSchema.js";
 
 dotenv.config({ path: ".env" });
 
@@ -42,8 +46,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(authRouter);  
+//  Роут reset-pwd — с /auth
+app.post("/reset-pwd", validateBody(resetPasswordSchema), resetPasswordController);
 
+// Роуты /auth/
+app.use("/auth", authRouter);
+
+// Роуты для /contacts/
 app.use("/contacts", contactsRouter);
 
 app.use(notFoundHandler);
