@@ -46,13 +46,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//  Роут reset-pwd — с /auth
+
 app.post("/reset-pwd", validateBody(resetPasswordSchema), resetPasswordController);
-
-// Роуты /auth/
 app.use("/auth", authRouter);
-
-// Роуты для /contacts/
 app.use("/contacts", contactsRouter);
 
 app.use(notFoundHandler);
