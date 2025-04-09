@@ -47,9 +47,6 @@ const addContactFn = async (req, res) => {
     return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
-  console.log('req.body:', req.body);
-  console.log('req.file:', req.file);
-  
   if (!name || !phone) {
     return res.status(400).json({
       status: 400,
@@ -65,18 +62,13 @@ const addContactFn = async (req, res) => {
     });
   }
 
-  
-  if (!req.file) {
-    return res.status(400).json({ message: 'Аватар є обов’язковим' });
-  }
-
   try {
-    const photoUrl = req.file?.path || null;
+    const photoUrl = req.file ? req.file.path : null; // если фото нет, установим null
 
     const newContact = await createContact({
       ...req.body,
       userId,
-      photo: photoUrl,
+      photo: photoUrl, // здесь будет null, если фото не передано
     });
 
     res.status(201).json({
@@ -92,6 +84,8 @@ const addContactFn = async (req, res) => {
     });
   }
 };
+
+
 
 
 

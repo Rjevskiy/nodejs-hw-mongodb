@@ -22,3 +22,6 @@ router.post("/send-reset-email", sendResetEmailController);
 router.post("/reset-pwd", validateBody(resetPasswordSchema), resetPasswordController);
 
 export default router;
+
+
+
