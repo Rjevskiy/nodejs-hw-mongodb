@@ -23,12 +23,12 @@
         process.exit(1);
       }
 
-      // Добавим временный userId для каждого контакта
-      const tempUserId = new mongoose.Types.ObjectId(); // Генерируем новый ObjectId
+      
+      const tempUserId = new mongoose.Types.ObjectId(); 
 
       contactsData = contactsData.map(contact => ({
         ...contact,
-        userId: tempUserId, // Добавляем этот userId ко всем контактам
+        userId: tempUserId, 
       }));
 
       await Contact.deleteMany();
@@ -43,3 +43,4 @@
       console.error('Ошибка подключения:', err.message);
       mongoose.connection.close();
     });
+photos 

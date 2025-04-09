@@ -31,3 +31,4 @@ export const createContactSchema = Joi.object({
   }),
   photo: Joi.any().optional(),
 });
+
