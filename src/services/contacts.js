@@ -1,7 +1,7 @@
 
 import Contact from '../models/Contact.js';
 
-
+ 
 
 export const getAllContacts = async (filter = {}, sortOptions = {}, skip = 0, limit = 10) => {
 

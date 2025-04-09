@@ -38,16 +38,18 @@ export const registerUserController = async (req, res, next) => {
 };
 
 
+
 // Створення контакту
 const addContactFn = async (req, res) => {
-  const { contactType, name, phone } = req.body;
+  console.log("REQ.BODY ДО ВАЛИДАЦИИ:", req.body);
+  const { contactType, name, phoneNumber } = req.body;
   const userId = req.user?._id;
 
   if (!userId) {
     return res.status(401).json({ status: 401, message: "Неавторизований доступ" });
   }
 
-  if (!name || !phone) {
+  if (!name || !phoneNumber) {
     return res.status(400).json({
       status: 400,
       message: "Ім’я та номер телефону обов’язкові",
@@ -63,12 +65,12 @@ const addContactFn = async (req, res) => {
   }
 
   try {
-    const photoUrl = req.file ? req.file.path : null; // если фото нет, установим null
+    const photoUrl = req.file ? req.file.path : null; 
 
     const newContact = await createContact({
       ...req.body,
       userId,
-      photo: photoUrl, // здесь будет null, если фото не передано
+      photo: photoUrl, 
     });
 
     res.status(201).json({
@@ -262,3 +264,5 @@ export const patchContact = ctrlWrapper(patchContactFn);
 export const getAllContactsController = ctrlWrapper(getAllContactsFn);
 export const getContactController = ctrlWrapper(getContactFn);
 export const deleteContactController = ctrlWrapper(deleteContactFn);
+
+
