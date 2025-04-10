@@ -1,0 +1,3 @@
+components:
+  securitySchemes:
+    $ref: './components/security.yaml'

@@ -1,0 +1,31 @@
+tags:
+  - Contacts
+summary: Отримати список контактів
+operationId: getContacts
+description: Повертає список контактів користувача
+security:
+  - bearerAuth: []
+parameters:
+  - in: query
+    name: page
+    schema:
+      type: integer
+      minimum: 1
+    required: false
+    description: Номер сторінки (за замовчуванням 1)
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      minimum: 1
+    required: false
+    description: Кількість контактів на сторінці (за замовчуванням 10)
+responses:
+  '200':
+    description: Успішно отримано список контактів
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/Contact.yaml'
