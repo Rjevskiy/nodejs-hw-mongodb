@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";  
+import YAML from "yamljs";  
 
 import contactsRouter from "./routes/contacts.js";
 import authRouter from "./routes/auth.js";
@@ -39,13 +41,18 @@ console.log("Завантажені змінні середовища:", {
 
 const app = express();
 
+// YAML  документація
+const swaggerDocument = YAML.load("./docs/openapi.yaml");
+
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 app.post("/reset-pwd", validateBody(resetPasswordSchema), resetPasswordController);
 app.use("/auth", authRouter);
@@ -54,7 +61,7 @@ app.use("/contacts", contactsRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Подключение к MongoDB
+// Подключення до MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose
