@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: contact-book-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+    routes:
+      - type: rewrite
+        source: /api-docs
+        destination: /api-docs/index.html
