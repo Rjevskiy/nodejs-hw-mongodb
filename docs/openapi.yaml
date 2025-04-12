@@ -9,30 +9,39 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
-servers:
-  - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api
-    description: Deployed server
-  - url: http://localhost:3000/api
-    description: Local server
-
-
 tags:
   - name: Contacts
     description: Операції з контактами
 
+servers:
+  - url: https://nodejs-hw-mongodb-1m6g.onrender.com
+    description: Deployed server
+  - url: http://localhost:3000
+    description: Local server
+
 paths:
   /contacts:
     get:
+      tags:
+        - Contacts
       $ref: './paths/contacts/get.yaml'
     post:
+      tags:
+        - Contacts
       $ref: './paths/contacts/post.yaml'
 
   /contacts/{contactId}:
     get:
+      tags:
+        - Contacts
       $ref: './paths/contacts/{id}/get.yaml'
     patch:
+      tags:
+        - Contacts
       $ref: './paths/contacts/{id}/patch.yaml'
     delete:
+      tags:
+        - Contacts
       $ref: './paths/contacts/{id}/delete.yaml'
 
 components:
