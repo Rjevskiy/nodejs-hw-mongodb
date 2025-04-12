@@ -10,10 +10,11 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: https://your-deployed-site.com
+  - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api
     description: Deployed server
-  - url: http://localhost:3000
+  - url: http://localhost:3000/api
     description: Local server
+
 
 tags:
   - name: Contacts
