@@ -1,0 +1,13 @@
+components:
+  responses:
+    NotFound:
+      description: Запрашиваемый ресурс не найден
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Ресурс не найден
+

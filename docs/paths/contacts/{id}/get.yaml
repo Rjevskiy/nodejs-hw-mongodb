@@ -2,7 +2,7 @@ tags:
   - Contacts
 summary: Отримати контакт за ID
 operationId: getContactById
-description: Повертає один контакт за його унікальним ідентифікатором.
+description: Повертає один контакт  за ID.
 security:
   - bearerAuth: []
 
