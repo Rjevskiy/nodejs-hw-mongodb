@@ -9,15 +9,15 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
+servers:
+  - url: https://your-deployed-site.com
+    description: Deployed server
+  - url: http://localhost:3000
+    description: Local server
+
 tags:
   - name: Contacts
     description: Операції з контактами
-
-servers:
-  - url: http://localhost:3000
-    description: Local server
-  - url: https://your-deployed-site.com
-    description: Deployed server
 
 paths:
   /contacts:
@@ -25,6 +25,7 @@ paths:
       $ref: './paths/contacts/get.yaml'
     post:
       $ref: './paths/contacts/post.yaml'
+
   /contacts/{contactId}:
     get:
       $ref: './paths/contacts/{id}/get.yaml'
