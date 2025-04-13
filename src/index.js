@@ -7,6 +7,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";  
 import YAML from "yamljs";  
+import path from "path";
+import { fileURLToPath } from "url";
 
 import contactsRouter from "./routes/contacts.js";
 import authRouter from "./routes/auth.js";
@@ -17,6 +19,7 @@ import { resetPasswordController } from "./controllers/auth.js";
 import { validateBody } from "./middlewares/validateBody.js";
 import { resetPasswordSchema } from "./schemas/authSchema.js";
 
+// Завантаження змінних середовища
 dotenv.config({ path: ".env" });
 
 const requiredEnvVars = [
@@ -41,9 +44,10 @@ console.log("Завантажені змінні середовища:", {
 
 const app = express();
 
-// YAML  документація
-const swaggerDocument = YAML.load("./docs/openapi.yaml");
-
+// Правильний шлях до swagger-файлу
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const swaggerDocument = YAML.load(path.join(__dirname, "..", "docs", "swagger", "openapi.yaml"));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -61,7 +65,7 @@ app.use("/contacts", contactsRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Подключення до MongoDB
+// Підключення до MongoDB
 const mongoURI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
 
 mongoose
