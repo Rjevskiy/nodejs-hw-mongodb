@@ -1,3 +1,21 @@
-components:
-  securitySchemes:
-    $ref: './components/security.yaml'
+type: object
+properties:
+  _id:
+    type: string
+    example: 66020f354a67de001f22d91f
+  name:
+    type: string
+    example: John Doe
+  email:
+    type: string
+    example: johndoe@example.com
+  phone:
+    type: string
+    example: +123456789
+  favorite:
+    type: boolean
+    example: true
+required:
+  - name
+  - email
+  - phone
