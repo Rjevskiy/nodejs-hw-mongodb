@@ -1,12 +1,12 @@
-
 import Contact from '../models/Contact.js';
 
  
 
+// Отримання всіх контактів
 export const getAllContacts = async (filter = {}, sortOptions = {}, skip = 0, limit = 10) => {
 
   if (!filter.userId) {
-    throw new Error('userId is required');
+    throw new Error('userId обов\'язковий');
   }
 
   return await Contact.find(filter)
@@ -15,18 +15,17 @@ export const getAllContacts = async (filter = {}, sortOptions = {}, skip = 0, li
     .sort(sortOptions);
 };
 
-
-// Получение контакта по ID
+// Отримання контакту за ID
 export const getContactById = async (contactId, userId) => {
   try {
     const contact = await Contact.findOne({ _id: contactId, userId });
     return contact;
   } catch (error) {
-    throw new Error("Error fetching contact by ID");
+    throw new Error("Помилка при отриманні контакту за ID");
   }
 };
 
-// Создание контакта
+// Створення контакту
 export const createContact = async ({ name, phoneNumber, email, isFavourite, contactType, userId, photo }) => {
   const newContact = new Contact({
     name,
@@ -42,7 +41,7 @@ export const createContact = async ({ name, phoneNumber, email, isFavourite, con
 };
 
 
-// Обновление контакта
+// Оновлення контакту
 export const updateContact = async (contactId, userId, { name, phoneNumber, email, isFavourite, contactType, photo }) => {
   const updatedContact = await Contact.findOneAndUpdate(
     { _id: contactId, userId },
@@ -54,7 +53,7 @@ export const updateContact = async (contactId, userId, { name, phoneNumber, emai
 };
 
 
-// Удаление контакта
+// Видалення контакту
 export const deleteContact = async (contactId, userId) => {
   return await Contact.findOneAndDelete({ _id: contactId, userId });
 };

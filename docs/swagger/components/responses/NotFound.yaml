@@ -1,4 +1,4 @@
-description: Запрашиваемый ресурс не найден
+description: Запитуваний ресурс не знайдено
 content:
   application/json:
     schema:
@@ -6,4 +6,4 @@ content:
       properties:
         error:
           type: string
-          example: Ресурс не найден
+          example: Ресурс не знайдено

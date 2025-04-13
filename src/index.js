@@ -19,7 +19,7 @@ import { resetPasswordController } from "./controllers/auth.js";
 import { validateBody } from "./middlewares/validateBody.js";
 import { resetPasswordSchema } from "./schemas/authSchema.js";
 
-// Завантаження змінних середовища
+
 dotenv.config({ path: ".env" });
 
 const requiredEnvVars = [
@@ -44,7 +44,7 @@ console.log("Завантажені змінні середовища:", {
 
 const app = express();
 
-// Правильний шлях до swagger-файлу
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const swaggerDocument = YAML.load(path.join(__dirname, "..", "docs", "swagger", "openapi.yaml"));
