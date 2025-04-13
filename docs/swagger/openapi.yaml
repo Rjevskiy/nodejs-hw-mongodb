@@ -8,27 +8,27 @@ servers:
 paths:
   /contacts:
     get:
-      summary: Get all contacts
+      summary: Отримати всі контакти
       responses:
         '200':
-          description: Successful response
+          description: Успішна відповідь
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
+                  $ref: './components/schemas/Contact.yaml'  
     post:
-      summary: Add new contact
+      summary: Додати новий контакт
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
+              $ref: './components/schemas/Contact.yaml'  
       responses:
         '201':
-          description: Contact created
+          description: Контакт створено
 
   /contacts/{contactId}:
     parameters:
@@ -38,34 +38,34 @@ paths:
         schema:
           type: string
     get:
-      summary: Get contact by ID
+      summary: Отримати контакт за ID
       responses:
         '200':
-          description: Contact found
+          description: Контакт знайдено
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
+                $ref: './components/schemas/Contact.yaml'  
         '404':
-          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+          $ref: './components/responses/NotFound.yaml'  
     patch:
-      summary: Update contact by ID
+      summary: Оновити контакт за ID
       responses:
         '200':
-          description: Contact updated
+          description: Контакт оновлено
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
+                $ref: './components/schemas/Contact.yaml'  
         '404':
-          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+          $ref: './components/responses/NotFound.yaml'  
     delete:
-      summary: Delete contact by ID
+      summary: Видалити контакт за ID
       responses:
         '200':
-          description: Contact deleted
+          description: Контакт видалено
         '404':
-          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+          $ref: './components/responses/NotFound.yaml'  
 
 components:
   schemas:
