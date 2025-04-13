@@ -17,7 +17,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components/schemas/Contact.yaml'
+                  $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
     post:
       summary: Add new contact
       requestBody:
@@ -25,7 +25,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components/schemas/Contact.yaml'
+              $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
       responses:
         '201':
           description: Contact created
@@ -45,6 +45,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'
+                $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
         '404':
-          $ref: './components/responses/NotFound.yaml'
+          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+    patch:
+      summary: Update contact by ID
+      responses:
+        '200':
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Contact.yaml'  # Убедись, что этот путь правильный
+        '404':
+          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+    delete:
+      summary: Delete contact by ID
+      responses:
+        '200':
+          description: Contact deleted
+        '404':
+          $ref: './components/responses/NotFound.yaml'  # Убедись, что этот путь правильный
+
+components:
+  schemas:
+    Contact:
+      $ref: './components/schemas/Contact.yaml'
+  responses:
+    NotFound:
+      $ref: './components/responses/NotFound.yaml'
