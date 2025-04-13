@@ -2,12 +2,19 @@ openapi: 3.0.0
 info:
   title: Contacts API
   version: 1.0.0
+
 servers:
   - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api-docs/
+
+tags:
+  - name: Contact
+    description: Операції з контактами
 
 paths:
   /contacts:
     get:
+      tags:
+        - Contact
       summary: Отримати всі контакти
       responses:
         '200':
@@ -17,15 +24,17 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components/schemas/Contact.yaml'  
+                  $ref: './components/schemas/Contact.yaml'
     post:
+      tags:
+        - Contact
       summary: Додати новий контакт
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components/schemas/Contact.yaml'  
+              $ref: './components/schemas/Contact.yaml'
       responses:
         '201':
           description: Контакт створено
@@ -38,6 +47,8 @@ paths:
         schema:
           type: string
     get:
+      tags:
+        - Contact
       summary: Отримати контакт за ID
       responses:
         '200':
@@ -45,10 +56,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'  
+                $ref: './components/schemas/Contact.yaml'
         '404':
-          $ref: './components/responses/NotFound.yaml'  
+          $ref: './components/responses/NotFound.yaml'
     patch:
+      tags:
+        - Contact
       summary: Оновити контакт за ID
       responses:
         '200':
@@ -56,16 +69,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'  
+                $ref: './components/schemas/Contact.yaml'
         '404':
-          $ref: './components/responses/NotFound.yaml'  
+          $ref: './components/responses/NotFound.yaml'
     delete:
+      tags:
+        - Contact
       summary: Видалити контакт за ID
       responses:
         '200':
           description: Контакт видалено
         '404':
-          $ref: './components/responses/NotFound.yaml'  
+          $ref: './components/responses/NotFound.yaml'
 
 components:
   schemas:
