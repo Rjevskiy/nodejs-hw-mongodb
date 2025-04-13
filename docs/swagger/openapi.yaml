@@ -1,50 +1,50 @@
 openapi: 3.0.0
-
 info:
-  title: Контактна Книга
+  title: Contacts API
   version: 1.0.0
-  description: >
-    Це API для керування контактами. Дозволяє створювати, оновлювати, видаляти та переглядати контакти.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-
-tags:
-  - name: Contacts
-    description: Операції з контактами
-
 servers:
-  - url: https://nodejs-hw-mongodb-1m6g.onrender.com
-    description: Deployed server
   - url: http://localhost:3000
-    description: Local server
 
 paths:
   /contacts:
     get:
-      $ref: './paths/contacts/get.yaml'
+      summary: Get all contacts
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Contact.yaml'
     post:
-      $ref: './paths/contacts/post.yaml'
+      summary: Add new contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/Contact.yaml'
+      responses:
+        '201':
+          description: Contact created
 
   /contacts/{contactId}:
+    parameters:
+      - name: contactId
+        in: path
+        required: true
+        schema:
+          type: string
     get:
-      $ref: './paths/contacts/{id}/get.yaml'
-    patch:
-      $ref: './paths/contacts/{id}/patch.yaml'
-    delete:
-      $ref: './paths/contacts/{id}/delete.yaml'
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas:
-    Contact:
-      $ref: './components/schemas/Contact.yaml'
-
-  responses:
-    NotFound:
-      $ref: './components/responses/NotFound.yaml'
+      summary: Get contact by ID
+      responses:
+        '200':
+          description: Contact found
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Contact.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
