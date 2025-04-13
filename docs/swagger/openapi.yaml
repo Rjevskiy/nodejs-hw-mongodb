@@ -3,7 +3,7 @@ info:
   title: Contacts API
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
+  - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api-docs/
 
 paths:
   /contacts:
