@@ -22,26 +22,16 @@ servers:
 paths:
   /contacts:
     get:
-      tags:
-        - Contacts
       $ref: './paths/contacts/get.yaml'
     post:
-      tags:
-        - Contacts
       $ref: './paths/contacts/post.yaml'
 
   /contacts/{contactId}:
     get:
-      tags:
-        - Contacts
       $ref: './paths/contacts/{id}/get.yaml'
     patch:
-      tags:
-        - Contacts
       $ref: './paths/contacts/{id}/patch.yaml'
     delete:
-      tags:
-        - Contacts
       $ref: './paths/contacts/{id}/delete.yaml'
 
 components:
