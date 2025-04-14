@@ -6,11 +6,13 @@ required:
 properties:
   name:
     type: string
-    example: Alice Smith
+    example: John Doe
   email:
     type: string
-    format: email
-    example: alice@example.com
+    example: johndoe@example.com
   phone:
     type: string
-    example: +380501234567
+    example: +123456789
+  favorite:
+    type: boolean
+    example: false
