@@ -7,14 +7,14 @@ servers:
   - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api-docs/
 
 tags:
-  - name: Contact
+  - name: Contacts
     description: Операції з контактами
 
 paths:
   /contacts:
     get:
       tags:
-        - Contact
+        - Contacts
       summary: Отримати всі контакти
       responses:
         '200':
@@ -27,17 +27,25 @@ paths:
                   $ref: './components/schemas/Contact.yaml'
     post:
       tags:
-        - Contact
+        - Contacts
       summary: Додати новий контакт
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components/schemas/Contact.yaml'
+              $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
       responses:
         '201':
           description: Контакт створено
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Contact.yaml'
+        '400':
+          description: Некоректні дані
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
 
   /contacts/{contactId}:
     parameters:
@@ -48,7 +56,7 @@ paths:
           type: string
     get:
       tags:
-        - Contact
+        - Contacts
       summary: Отримати контакт за ID
       responses:
         '200':
@@ -61,7 +69,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     patch:
       tags:
-        - Contact
+        - Contacts
       summary: Оновити контакт за ID
       responses:
         '200':
@@ -74,7 +82,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     delete:
       tags:
-        - Contact
+        - Contacts
       summary: Видалити контакт за ID
       responses:
         '200':
@@ -86,6 +94,10 @@ components:
   schemas:
     Contact:
       $ref: './components/schemas/Contact.yaml'
+    ContactCreate:
+      $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
   responses:
     NotFound:
       $ref: './components/responses/NotFound.yaml'
+    Unauthorized:
+      $ref: './components/responses/Unauthorized.yaml'
