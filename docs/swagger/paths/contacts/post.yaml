@@ -10,17 +10,18 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: '/components/schemas/ContactCreate/ContactCreate.yaml'  # Пробуй абсолютный путь
+        $ref: '../../components/schemas/ContactCreate/ContactCreate.yaml'
+
 responses:
   '201':
     description: Контакт успішно створено
     content:
       application/json:
         schema:
-          $ref: '/components/schemas/Contact.yaml'  # Пробуй абсолютный путь
+          $ref: '../../components/schemas/Contact.yaml'  
   '400':
     description: Некоректні дані
   '401':
-    $ref: '/components/responses/Unauthorized.yaml'
+    $ref: '../components/responses/Unauthorized.yaml'
   '404':
-    $ref: '/components/responses/NotFound.yaml'
+    $ref: '../components/responses/NotFound.yaml'

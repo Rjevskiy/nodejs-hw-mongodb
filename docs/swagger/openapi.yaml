@@ -17,7 +17,7 @@ paths:
         - Contacts
       summary: Отримати всі контакти
       security:
-        - bearerAuth: []  # Добавляем ссылку на схему авторизации
+        - bearerAuth: []  
       responses:
         '200':
           description: Успішна відповідь
@@ -32,7 +32,7 @@ paths:
         - Contacts
       summary: Додати новий контакт
       security:
-        - bearerAuth: []  # Добавляем ссылку на схему авторизации
+        - bearerAuth: []  
       requestBody:
         required: true
         content:
@@ -63,7 +63,7 @@ paths:
         - Contacts
       summary: Отримати контакт за ID
       security:
-        - bearerAuth: []  # Добавляем ссылку на схему авторизации
+        - bearerAuth: []  
       responses:
         '200':
           description: Контакт знайдено
@@ -78,7 +78,7 @@ paths:
         - Contacts
       summary: Оновити контакт за ID
       security:
-        - bearerAuth: []  # Добавляем ссылку на схему авторизации
+        - bearerAuth: []  
       responses:
         '200':
           description: Контакт оновлено
@@ -93,7 +93,7 @@ paths:
         - Contacts
       summary: Видалити контакт за ID
       security:
-        - bearerAuth: []  # Добавляем ссылку на схему авторизации
+        - bearerAuth: []  
       responses:
         '200':
           description: Контакт видалено
