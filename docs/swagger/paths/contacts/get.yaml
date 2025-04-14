@@ -29,3 +29,5 @@ responses:
           type: array
           items:
             $ref: '../../components/schemas/Contact.yaml'
+  '401':
+    $ref: '../../components/responses/Unauthorized.yaml'
