@@ -10,7 +10,7 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: '../../components/schemas/Contact.yaml'
+        $ref: '../../components/schemas/ContactCreate.yaml'
 responses:
   '201':
     description: Контакт успішно створено
@@ -20,3 +20,5 @@ responses:
           $ref: '../../components/schemas/Contact.yaml'
   '400':
     description: Некоректні дані
+  '401':
+    $ref: '../../components/responses/Unauthorized.yaml'
