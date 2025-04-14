@@ -1,0 +1,9 @@
+description: Запитуваний ресурс не знайдено
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Ресурс не знайдено

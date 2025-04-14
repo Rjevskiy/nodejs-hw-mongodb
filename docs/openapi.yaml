@@ -17,7 +17,7 @@ paths:
         - Contacts
       summary: Отримати всі контакти
       security:
-        - bearerAuth: []
+        - bearerAuth: []  # Добавляем ссылку на схему авторизации
       responses:
         '200':
           description: Успішна відповідь
@@ -26,30 +26,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Contact'
+                  $ref: './components/schemas/Contact.yaml'
     post:
       tags:
         - Contacts
       summary: Додати новий контакт
       security:
-        - bearerAuth: []
+        - bearerAuth: []  # Добавляем ссылку на схему авторизации
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ContactCreate'
+              $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
       responses:
         '201':
           description: Контакт створено
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Contact'
+                $ref: './components/schemas/Contact.yaml'
         '400':
           description: Некоректні дані
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: './components/responses/Unauthorized.yaml'
 
   /contacts/{contactId}:
     parameters:
@@ -63,42 +63,42 @@ paths:
         - Contacts
       summary: Отримати контакт за ID
       security:
-        - bearerAuth: []
+        - bearerAuth: []  
       responses:
         '200':
           description: Контакт знайдено
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Contact'
+                $ref: './components/schemas/Contact.yaml'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: './components/responses/NotFound.yaml'
     patch:
       tags:
         - Contacts
       summary: Оновити контакт за ID
       security:
-        - bearerAuth: []
+        - bearerAuth: []  
       responses:
         '200':
           description: Контакт оновлено
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Contact'
+                $ref: './components/schemas/Contact.yaml'
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: './components/responses/NotFound.yaml'
     delete:
       tags:
         - Contacts
       summary: Видалити контакт за ID
       security:
-        - bearerAuth: []
+        - bearerAuth: []  # Добавляем ссылку на схему авторизации
       responses:
         '200':
           description: Контакт видалено
         '404':
-          $ref: '#/components/responses/NotFound'
+          $ref: './components/responses/NotFound.yaml'
 
 components:
   securitySchemes:
