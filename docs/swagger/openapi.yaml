@@ -1,3 +1,15 @@
+openapi: 3.0.0
+info:
+  title: Contacts API
+  version: 1.0.0
+
+servers:
+  - url: https://nodejs-hw-mongodb-1m6g.onrender.com/api-docs/
+
+tags:
+  - name: Contacts
+    description: Операції з контактами
+
 paths:
   /contacts:
     get:
@@ -87,3 +99,20 @@ paths:
           description: Контакт видалено
         '404':
           $ref: './components/responses/NotFound.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Contact:
+      $ref: './components/schemas/Contact.yaml'
+    ContactCreate:
+      $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
+  responses:
+    NotFound:
+      $ref: './components/responses/NotFound.yaml'
+    Unauthorized:
+      $ref: './components/responses/Unauthorized.yaml'
