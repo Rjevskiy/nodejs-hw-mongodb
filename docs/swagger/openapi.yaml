@@ -8,7 +8,7 @@ servers:
 
 tags:
   - name: Contacts
-    description: Операции с контактами
+    description: Операції з контактами
 
 paths:
   /contacts:
@@ -26,7 +26,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './swagger/components/schemas/Contact.yaml'
+                  $ref: './components/schemas/Contact.yaml'
     post:
       tags:
         - Contacts
@@ -38,14 +38,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './swagger/components/schemas/ContactCreate/ContactCreate.yaml'
+              $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
       responses:
         '201':
           description: Контакт створено
           content:
             application/json:
               schema:
-                $ref: './swagger/components/schemas/Contact.yaml'
+                $ref: './components/schemas/Contact.yaml'
         '400':
           description: Некоректні дані
         '401':
@@ -63,14 +63,14 @@ paths:
         - Contacts
       summary: Отримати контакт за ID
       security:
-        - bearerAuth: []  
+        - bearerAuth: []
       responses:
         '200':
           description: Контакт знайдено
           content:
             application/json:
               schema:
-                $ref: './swagger/components/schemas/Contact.yaml'
+                $ref: './components/schemas/Contact.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
     patch:
@@ -78,14 +78,14 @@ paths:
         - Contacts
       summary: Оновити контакт за ID
       security:
-        - bearerAuth: []  
+        - bearerAuth: []
       responses:
         '200':
           description: Контакт оновлено
           content:
             application/json:
               schema:
-                $ref: './swagger/components/schemas/Contact.yaml'
+                $ref: './components/schemas/Contact.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
     delete:
@@ -108,9 +108,9 @@ components:
       bearerFormat: JWT
   schemas:
     Contact:
-      $ref: './swagger/components/schemas/Contact.yaml'
+      $ref: './components/schemas/Contact.yaml'
     ContactCreate:
-      $ref: './swagger/components/schemas/ContactCreate/ContactCreate.yaml'
+      $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
   responses:
     NotFound:
       $ref: './components/responses/NotFound.yaml'
