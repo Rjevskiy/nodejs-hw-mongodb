@@ -1,9 +1,0 @@
-description: Користувач не авторизований
-content:
-  application/json:
-    schema:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Not authorized
