@@ -38,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
+              $ref: './components/schemas/ContactCreate.yaml'
       responses:
         '201':
           description: Контакт створено
@@ -110,7 +110,7 @@ components:
     Contact:
       $ref: './components/schemas/Contact.yaml'
     ContactCreate:
-      $ref: './components/schemas/ContactCreate/ContactCreate.yaml'
+      $ref: './components/schemas/ContactCreate.yaml'
   responses:
     NotFound:
       $ref: './components/responses/NotFound.yaml'
