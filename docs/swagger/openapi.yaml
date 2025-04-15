@@ -26,7 +26,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components/schemas/Contact.yaml'
+                  $ref: '#/components/schemas/Contact'
     post:
       tags:
         - Contacts
@@ -38,18 +38,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components/schemas/ContactCreate.yaml'
+              $ref: '#/components/schemas/ContactCreate'
       responses:
         '201':
           description: Контакт створено
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'
+                $ref: '#/components/schemas/Contact'
         '400':
           description: Некоректні дані
         '401':
-          $ref: './components/responses/Unauthorized.yaml'
+          $ref: '#/components/responses/Unauthorized'
 
   /contacts/{contactId}:
     parameters:
@@ -70,24 +70,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'
+                $ref: '#/components/schemas/Contact'
         '404':
-          $ref: './components/responses/NotFound.yaml'
+          $ref: '#/components/responses/NotFound'
     patch:
       tags:
         - Contacts
       summary: Оновити контакт за ID
       security:
         - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreate'
       responses:
         '200':
           description: Контакт оновлено
           content:
             application/json:
               schema:
-                $ref: './components/schemas/Contact.yaml'
+                $ref: '#/components/schemas/Contact'
         '404':
-          $ref: './components/responses/NotFound.yaml'
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Contacts
@@ -98,7 +104,7 @@ paths:
         '200':
           description: Контакт видалено
         '404':
-          $ref: './components/responses/NotFound.yaml'
+          $ref: '#/components/responses/NotFound'
 
 components:
   securitySchemes:
@@ -106,13 +112,70 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   schemas:
-    Contact:
-      $ref: './components/schemas/Contact.yaml'
     ContactCreate:
-      $ref: './components/schemas/ContactCreate.yaml'
+      type: object
+      required:
+        - name
+        - email
+        - phone
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: johndoe@example.com
+        phone:
+          type: string
+          example: +123456789
+        favorite:
+          type: boolean
+          example: false
+
+    Contact:
+      type: object
+      required:
+        - name
+        - email
+        - phone
+      properties:
+        _id:
+          type: string
+          example: 66020f354a67de001f22d91f
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: johndoe@example.com
+        phone:
+          type: string
+          example: +123456789
+        favorite:
+          type: boolean
+          example: true
+
   responses:
     NotFound:
-      $ref: './components/responses/NotFound.yaml'
+      description: Контакт не знайдено
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Contact not found
+
     Unauthorized:
-      $ref: './components/responses/Unauthorized.yaml'
+      description: Неавторизований доступ
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Not authorized
